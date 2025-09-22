@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link crossorigin="" rel="preconnect" href="https://fonts.gstatic.com/">
+<link as="style" rel="stylesheet" onload="this.rel='stylesheet'" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Inter%3Awght%40400%3B500%3B700%3B900">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#13ec13",
+              "background-light": "#1a1a1a",
+              "background-dark": "#101010",
+              "surface-dark": "#1f1f1f",
+              "text-muted": "#888888",
+              "text-subtle": "#555555",
+            },
+            fontFamily: {
+              display: ["Inter"],
+            },
+            borderRadius: { DEFAULT: "0.5rem", lg: "1rem", xl: "1.5rem", full: "9999px" },
+          },
+        },
+      };
+    </script>
+<title>Stitch Design - Minimalist Dark</title>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+    .scale-hover {
+      transition: transform 0.2s ease-in-out;
+    }
+    .scale-hover:hover {
+      transform: scale(1.03);
+    }
+    .interactive-element {
+        transition: background-color 0.2s ease-in-out, transform 0.2s ease-in-out;
+    }
+    .interactive-element:active {
+        transform: scale(0.98);
+    }
+  </style>
+</head>
+<body class="bg-background-dark font-display text-neutral-200 dark:text-neutral-200">
+<div class="flex h-full min-h-screen w-full flex-col">
+<header class="sticky top-0 z-10 bg-background-dark/80 px-4 py-3 backdrop-blur-sm">
+<div class="flex items-center">
+<button class="flex h-10 w-10 items-center justify-center rounded-full text-neutral-400 hover:bg-surface-dark interactive-element">
+<svg fill="currentColor" height="24" viewBox="0 0 256 256" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="M224,128a8,8,0,0,1-8,8H59.31l58.35,58.34a8,8,0,0,1-11.32,11.32l-72-72a8,8,0,0,1,0-11.32l72-72a8,8,0,0,1,11.32,11.32L59.31,120H216A8,8,0,0,1,224,128Z"></path>
+</svg>
+</button>
+<h1 class="flex-1 text-center text-lg font-bold text-neutral-100">Mood Tracker</h1>
+<div class="h-10 w-10"></div>
+</div>
+</header>
+<main class="flex-1 px-4 py-6">
+<div class="mx-auto max-w-md">
+<section class="mb-8 text-center">
+<h2 class="text-3xl font-bold text-neutral-100">How are you feeling today?</h2>
+<p class="mt-2 text-text-muted">Your thoughts are safe here. Take a moment for yourself.</p>
+</section>
+<section class="mb-8 rounded-xl bg-surface-dark p-6 shadow-lg">
+<div class="mb-4 flex items-center justify-between">
+<span class="font-medium text-neutral-300">Mood</span>
+<span class="font-semibold text-primary">Neutral</span>
+</div>
+<div class="relative h-2.5 w-full rounded-full bg-neutral-700">
+<div class="absolute h-full w-1/2 rounded-full bg-primary"></div>
+<div class="absolute -top-2.5" style="left: 50%; transform: translateX(-50%)">
+<div class="h-7 w-7 rounded-full border-4 border-primary bg-background-dark shadow-lg shadow-primary/30"></div>
+</div>
+</div>
+<div class="mt-3 flex justify-between text-xs text-text-subtle">
+<span>Low</span>
+<span>High</span>
+</div>
+</section>
+<section class="mb-8">
+<textarea class="form-input min-h-[120px] w-full resize-none rounded-lg border-neutral-700 bg-surface-dark p-4 text-neutral-200 placeholder:text-text-subtle focus:border-primary focus:ring-primary" placeholder="Add a note about your day... (optional)"></textarea>
+</section>
+<section class="text-center">
+<button class="w-full rounded-full bg-primary py-3 text-base font-bold text-black shadow-lg shadow-primary/30 interactive-element scale-hover">Save Mood</button>
+</section>
+<section class="mt-12">
+<h2 class="mb-4 text-xl font-bold text-neutral-100">Your Mood Trends</h2>
+<div class="rounded-xl border border-neutral-700 bg-surface-dark p-4">
+<div class="flex items-start justify-between">
+<div>
+<p class="text-sm text-text-muted">Overall Mood</p>
+<p class="text-2xl font-bold text-neutral-100">Neutral</p>
+</div>
+<div class="text-right">
+<p class="text-sm text-text-muted">Last 7 Days</p>
+<p class="font-semibold text-green-500">+5%</p>
+</div>
+</div>
+<div class="mt-6 h-40">
+<svg fill="none" height="100%" preserveAspectRatio="none" viewBox="0 0 472 150" width="100%" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<linearGradient gradientUnits="userSpaceOnUse" id="chart-gradient" x1="0" x2="0" y1="0" y2="150">
+<stop stop-color="#13ec13" stop-opacity="0.3"></stop>
+<stop offset="1" stop-color="#13ec13" stop-opacity="0"></stop>
+</linearGradient>
+</defs>
+<path d="M0 109C18.1538 109 18.1538 21 36.3077 21C54.4615 21 54.4615 41 72.6154 41C90.7692 41 90.7692 93 108.923 93C127.077 93 127.077 33 145.231 33C163.385 33 163.385 101 181.538 101C199.692 101 199.692 61 217.846 61C236 61 236 45 254.154 45C272.308 45 272.308 121 290.462 121C308.615 121 308.615 149 326.769 149C344.923 149 344.923 1 363.077 1C381.231 1 381.231 81 399.385 81C417.538 81 417.538 129 435.692 129C453.846 129 453.846 25 472 25" stroke="#13ec13" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"></path>
+<path d="M0 109C18.1538 109 18.1538 21 36.3077 21C54.4615 21 54.4615 41 72.6154 41C90.7692 41 90.7692 93 108.923 93C127.077 93 127.077 33 145.231 33C163.385 33 163.385 101 181.538 101C199.692 101 199.692 61 217.846 61C236 61 236 45 254.154 45C272.308 45 272.308 121 290.462 121C308.615 121 308.615 149 326.769 149C344.923 149 344.923 1 363.077 1C381.231 1 381.231 81 399.385 81C417.538 81 417.538 129 435.692 129C453.846 129 453.846 25 472 25V150H0V109Z" fill="url(#chart-gradient)"></path>
+</svg>
+</div>
+<div class="mt-4 flex justify-around border-t border-neutral-700 pt-2">
+<p class="text-xs font-bold text-text-subtle">Mon</p>
+<p class="text-xs font-bold text-text-subtle">Tue</p>
+<p class="text-xs font-bold text-text-subtle">Wed</p>
+<p class="text-xs font-bold text-text-subtle">Thu</p>
+<p class="text-xs font-bold text-primary">Fri</p>
+<p class="text-xs font-bold text-text-subtle">Sat</p>
+<p class="text-xs font-bold text-text-subtle">Sun</p>
+</div>
+</div>
+</section>
+</div>
+</main>
+<footer class="sticky bottom-0 border-t border-neutral-700 bg-background-dark/80 pb-4 pt-2 backdrop-blur-sm">
+<nav class="flex justify-around">
+<a class="flex flex-col items-center gap-1 text-text-muted hover:text-neutral-200" href="Home.html">
+<svg fill="currentColor" height="24" viewBox="0 0 256 256" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="M218.83,103.77l-80-75.48a1.14,1.14,0,0,1-.11-.11,16,16,0,0,0-21.53,0l-.11.11L37.17,103.77A16,16,0,0,0,32,115.55V208a16,16,0,0,0,16,16H96a16,16,0,0,0,16-16V160h32v48a16,16,0,0,0,16,16h48a16,16,0,0,0,16-16V115.55A16,16,0,0,0,218.83,103.77ZM208,208H160V160a16,16,0,0,0-16-16H112a16,16,0,0,0-16,16v48H48V115.55l.11-.1L128,40l79.9,75.43.11.1Z"></path>
+</svg>
+<span class="text-xs font-medium">Home</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-text-muted hover:text-neutral-200" href="Library.html">
+<svg fill="currentColor" height="24" viewBox="0 0 256 256" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="M184,32H72A16,16,0,0,0,56,48V224a8,8,0,0,0,12.24,6.78L128,193.43l59.77,37.35A8,8,0,0,0,200,224V48A16,16,0,0,0,184,32Zm0,16V161.57l-51.77-32.35a8,8,0,0,0-8.48,0L72,161.56V48ZM132.23,177.22a8,8,0,0,0-8.48,0L72,209.57V180.43l56-35,56,35v29.14Z"></path>
+</svg>
+<span class="text-xs font-medium">Library</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-text-muted hover:text-neutral-200" href="Community.html">
+<svg fill="currentColor" height="24" viewBox="0 0 256 256" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="M117.25,157.92a60,60,0,1,0-66.5,0A95.83,95.83,0,0,0,3.53,195.63a8,8,0,1,0,13.4,8.74,80,80,0,0,1,134.14,0,8,8,0,0,0,13.4-8.74A95.83,95.83,0,0,0,117.25,157.92ZM40,108a44,44,0,1,1,44,44A44.05,44.05,0,0,1,40,108Zm210.14,98.7a8,8,0,0,1-11.07-2.33A79.83,79.83,0,0,0,172,168a8,8,0,0,1,0-16,44,44,0,1,0-16.34-84.87,8,8,0,1,1-5.94-14.85,60,60,0,0,1,55.53,105.64,95.83,95.83,0,0,1,47.22,37.71A8,8,0,0,1,250.14,206.7Z"></path>
+</svg>
+<span class="text-xs font-medium">Community</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-primary" href="Mood.html">
+<svg fill="currentColor" height="24" viewBox="0 0 256 256" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24ZM92,96a12,12,0,1,1-12,12A12,12,0,0,1,92,96Zm82.92,60c-10.29,17.79-27.39,28-46.92,28s-36.63-10.2-46.92-28a8,8,0,1,1,13.84-8c7.47,12.91,19.21,20,33.08,20s25.61-7.1,33.08-20a8,8,0,1,1,13.84,8ZM164,120a12,12,0,1,1,12-12A12,12,0,0,1,164,120Z"></path>
+</svg>
+<span class="text-xs font-bold">Mood</span>
+</a>
+</nav>
+</footer>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Mental Health Library</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#13a4ec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101c22",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.5rem",
+                        "lg": "1rem",
+                        "xl": "1.5rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display">
+<div class="flex flex-col min-h-screen">
+<header class="sticky top-0 z-10 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm">
+<div class="flex items-center justify-between p-4">
+<div class="w-10"></div>
+<h1 class="text-lg font-bold text-slate-900 dark:text-white flex-1 text-center">Library</h1>
+<button class="w-10 h-10 flex items-center justify-center text-slate-600 dark:text-slate-300">
+<span class="material-symbols-outlined">
+                        settings
+                    </span>
+</button>
+</div>
+</header>
+<main class="flex-1 px-4 pt-4 pb-20">
+<div class="relative mb-6">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-400">
+                    search
+                </span>
+<input class="w-full bg-white dark:bg-slate-800 border-none text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 rounded-lg pl-12 pr-4 py-3 focus:ring-2 focus:ring-primary" placeholder="Search for resources" type="text"/>
+</div>
+
+<div id="daily-tip-banner" class="relative bg-primary/10 dark:bg-primary/20 text-primary dark:text-primary-light rounded-lg p-4 mb-6 flex items-center justify-between">
+    <div class="flex-1 mr-4">
+        <span class="material-symbols-outlined text-xl mr-2">lightbulb</span>
+        <span class="text-sm font-medium">
+            "Every day is a chance to begin again. You are the creator of your own joy." - Unknown
+        </span>
+    </div>
+    <button class="text-primary dark:text-primary-light hover:text-primary-dark dark:hover:text-primary-lighter text-lg" onclick="document.getElementById('daily-tip-banner').style.display='none';">
+        <span class="material-symbols-outlined">close</span>
+    </button>
+</div>
+
+<h2 class="text-xl font-bold text-slate-900 dark:text-white mb-4">Categories</h2>
+<div class="grid grid-cols-2 gap-4">
+<a class="flex flex-col items-center justify-center p-4 bg-white dark:bg-slate-800 rounded-xl shadow-sm hover:bg-primary/10 dark:hover:bg-primary/20 transition-colors duration-200" href="#">
+<div class="w-16 h-16 rounded-full bg-cover bg-center mb-3" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuD-SenLak9zpCmMwbrrkkcY8jxlvOxVFbnFnQT4tqFNfU8cIvVseuDoHH8_pa6mCVGDGOroaakeBcsPEcbs7q7vn_d5AwnfI7ZGPssqO9b1pBoqUx7SL8_uA7tloJgE5__lo5Ev5AVkCkd5cYRzU3mkdG0us2YmwXtMOTTGDcao0uCHYyIzWYxIDK1dJMLkDW3qqOsjRzB5W-Un2Jdbkj8bJk8SQ_b4rblnbeRXdHzjB9j9AqVIl-OYv10dl6eHmVV_-216VrT8Lfo");'></div>
+<h3 class="font-semibold text-slate-900 dark:text-white text-center">Mindfulness</h3>
+</a>
+<a class="flex flex-col items-center justify-center p-4 bg-white dark:bg-slate-800 rounded-xl shadow-sm hover:bg-primary/10 dark:hover:bg-primary/20 transition-colors duration-200" href="#">
+<div class="w-16 h-16 rounded-full bg-cover bg-center mb-3" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBiTi8gj2zxsUTkO3U71PPa6uw_uOhPcrkrcqL3_d2jsKUlEsw5V5rhSAHSI10ps7OVWQ8z5dnzoUFSIlQxRa0Uv2e150GkWOQn3fNfcH267wXe5Rb6Ldo5dqR-wOD_JXAUn7AecNURQHkcDqlLjTEQJKtqLKYaK8nJYFRak88GPFLcigUIcHKodBLTl6A-OXB8J2_MsJMRc1bK_XldU5m-hMl9PHw4TcfgqLiriUwq3aDvH5IB49Ng25r9OP9bjrOdbZewM_x_kkQ");'></div>
+<h3 class="font-semibold text-slate-900 dark:text-white text-center">Anxiety</h3>
+</a>
+<a class="flex flex-col items-center justify-center p-4 bg-white dark:bg-slate-800 rounded-xl shadow-sm hover:bg-primary/10 dark:hover:bg-primary/20 transition-colors duration-200" href="#">
+<div class="w-16 h-16 rounded-full bg-cover bg-center mb-3" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCNgS8vFx7s5L5BSSSXYuskoGMtNKLQxGRjGDRSLYfVqZImh4xuuU-2awF9zP65oafyphAfufaLaOGwmyWmkDUlcccr7B9l2ZvRl9A2caX1fBioWNXBHNwtJR0jqDGMHsvQlgN2VNhQ627FNeETHuQUmjolvEzNZXUjrfIJjFl3lI01DOnEpOttWeDiLvOicBI_QNIxk5AyLp_FQ8xDaDcBn8ZteTqDpZYa24xHfZxbL_nHxrzP7_ykxmlsXVdx8qV_1nvTHCBF07U");'></div>
+<h3 class="font-semibold text-slate-900 dark:text-white text-center">Stress</h3>
+</a>
+<a class="flex flex-col items-center justify-center p-4 bg-white dark:bg-slate-800 rounded-xl shadow-sm hover:bg-primary/10 dark:hover:bg-primary/20 transition-colors duration-200" href="#">
+<div class="w-16 h-16 rounded-full bg-cover bg-center mb-3" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDRut8GvRa1A4Um8QPfFxGUJwfpjy2YV2pXvI89B7vLFtwQWQfW05SXA-Ts6mWFLsanIYB0Oc318Ikyj2c8GQUHyEFbLnQVgJ5kdgHXdqiwUx1LQG2iRDmz_mGNakYM0HqDcf1NcfS0Z_PBH5Cyb03Hsq4E2tDY6OfIgUloyti3CvlpSWsCWs-IDP-udrgK4J37geieTikMWBNnb-rzyPn8SgI3CrXfjXLDNw67unUHG15mIhPYGeHl4KBLejGMGYodVclKZXHCC_c");'></div>
+<h3 class="font-semibold text-slate-900 dark:text-white text-center">Depression</h3>
+</a>
+<a class="flex flex-col items-center justify-center p-4 bg-white dark:bg-slate-800 rounded-xl shadow-sm hover:bg-primary/10 dark:hover:bg-primary/20 transition-colors duration-200" href="#">
+<div class="w-16 h-16 rounded-full bg-cover bg-center mb-3" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCdLumqKscXhPVQ6rvy04rT99hDQd8GQOKG4ys4hoYu0BN0funUqeqn5XJ9KiiH_PGOVwTPZJH43Vl9-hPCT_HRP9vYgOcV9eEWfKtsBzuI4y6Sn01hI-FwT-YU0v04CnFmTaHOagVhtEytoF1bPejl5plYKHlKi-90I4gjYPG8VjCeQGym-CmPi_GF9wgMCeLOVzKhZz2XULovj2CUwlR1WKguxOk1gydM_lmH8YsoGNEcULhdUvgqRakl408JlR7_nIySTlscWhM");'></div>
+<h3 class="font-semibold text-slate-900 dark:text-white text-center">Meditation</h3>
+</a>
+<a class="flex flex-col items-center justify-center p-4 bg-white dark:bg-slate-800 rounded-xl shadow-sm hover:bg-primary/10 dark:hover:bg-primary/20 transition-colors duration-200" href="#">
+<div class="w-16 h-16 rounded-full bg-cover bg-center mb-3" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBnCwvxISDZpAaOo9iNdEPDR34SfVKtW6ibRmTD1mLBxFG5nwlLA8wjrJK5VHCtdvDP4sHAmR6PLKvn32Z3H8Ahx_iQ7Xr2a9-xV-P-f8Nuco_tIRU7CRE4p1k0bLnBKZ8ICgMbd1UZkg56d_COrQNgXzV_7_vOAAaQx3aI_gAmMbFGfJVOCUvughriCMcH9teDI0JUMSJHiU_KqLgsDS_PSxtv7p-RNe9aux7CghZyAfiXwEQpCEh8OFTDipMzAy12fgVZi1ZGXr4");'></div>
+<h3 class="font-semibold text-slate-900 dark:text-white text-center">Overwhelm</h3>
+</a>
+</div>
+</main>
+<nav class="fixed bottom-0 left-0 right-0 bg-background-light dark:bg-background-dark border-t border-slate-200 dark:border-slate-800 pb-safe-bottom">
+<div class="flex justify-around items-center h-16">
+<a class="flex flex-col items-center justify-center gap-1 text-slate-500 dark:text-slate-400" href="Home.html">
+<span class="material-symbols-outlined">home</span>
+<span class="text-xs font-medium">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center gap-1 text-primary" href="Library.html">
+<span class="material-symbols-outlined font-bold">book</span>
+<span class="text-xs font-bold">Library</span>
+</a>
+<a class="flex flex-col items-center justify-center gap-1 text-slate-500 dark:text-slate-400" href="Community.html">
+<span class="material-symbols-outlined">group</span>
+<span class="text-xs font-medium">Community</span>
+</a>
+<a class="flex flex-col items-center justify-center gap-1 text-slate-500 dark:text-slate-400" href="Mood.html">
+<span class="material-symbols-outlined">sentiment_satisfied</span>
+<span class="text-xs font-medium">Mood</span>
+</a>
+</div>
+</nav>
+</div>
+
+</body></html>

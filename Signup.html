@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Sign Up</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#13b6ec",
+            "secondary": "#22c55e",
+            "background-light": "#f6f8f8",
+            "background-dark": "#101d22",
+            "text-primary-dark": "#ffffff",
+            "text-secondary-dark": "#cccccc",
+            "input-background-dark": "#1a2830",
+            "input-border-dark": "#2a3a44",
+          },
+          fontFamily: {
+            "display": ["Inter"]
+          },
+          borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
+        },
+      },
+    }
+  </script>
+<style>
+    .form-checkbox:checked {
+      background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e");
+    }
+    .form-select {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+        background-position: right 0.5rem center;
+        background-repeat: no-repeat;
+        background-size: 1.5em 1.5em;
+        padding-right: 2.5rem;
+        -webkit-print-color-adjust: exact;
+        color-adjust: exact;
+        print-color-adjust: exact;
+    }
+    .dark .form-select {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%239ca3af' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-dark text-text-primary-dark font-display dark">
+<div class="flex flex-col h-screen">
+<header class="flex items-center p-4">
+<button class="text-stone-200 dark:text-stone-800">
+<svg fill="currentColor" height="24" viewBox="0 0 256 256" width="24" xmlns="http://www.w3.org/2000/svg">
+<path d="M224,128a8,8,0,0,1-8,8H59.31l58.35,58.34a8,8,0,0,1-11.32,11.32l-72-72a8,8,0,0,1,0-11.32l72-72a8,8,0,0,1,11.32,11.32L59.31,120H216A8,8,0,0,1,224,128Z"></path>
+</svg>
+</button>
+<div class="ml-auto">
+    <button id="theme-toggle" class="p-2 rounded-full hover:bg-stone-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+        <svg id="theme-icon" class="w-6 h-6 text-stone-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 12.21a9 9 0 11-8.153 8.153 9.04 9.04 0 011.01-.838 8.999 8.999 0 001.027-1.649 8.985 8.985 0 001.147-2.673 8.978 8.978 0 001.79-3.658c0-.002.001-.004.002-.006z"></path>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 3a2.98 2.98 0 00.944 2.087 2.98 2.98 0 003.153 0A2.98 2.98 0 0018 5.987V6a1 1 0 001 1h.5a4 4 0 010 8H18a1 1 0 00-1 1v.013a2.98 2.98 0 00-1.011 2.093 2.98 2.98 0 00-3.152 0A2.98 2.98 0 0012 18.013V18a1 1 0 00-1-1h-.5a4 4 0 01-1-7.987V12a1 1 0 00-1-1H6a4 4 0 010-8H6.5a2.98 2.98 0 001.011-2.093A2.98 2.98 0 009.647 3h4.706z"></path>
+        </svg>
+    </button>
+</div>
+</header>
+<main class="flex-grow flex flex-col pt-4 px-6">
+<div class="text-center mb-8">
+<h2 class="text-4xl font-bold text-primary">YOUPER</h2>
+<p class="text-lg font-bold text-white mt-2">Sign Up</p>
+</div>
+<div class="space-y-6">
+<div class="space-y-4">
+<div>
+<label class="text-sm font-medium text-stone-300" for="university">Select University</label>
+<select class="mt-1 block w-full bg-input-background-dark border-input-border-dark focus:border-primary focus:ring-primary rounded-xl p-4 text-text-primary-dark placeholder-stone-500 form-select appearance-none" id="university">
+<option selected="">Choose your university</option>
+<option>Mbarara University Of Science and Technology</option>
+<option>Makerere University</option>
+<option>Kyambogo University</option>
+</select>
+</div>
+<div>
+<label class="text-sm font-medium text-stone-300" for="student-number">Registration / Student Number</label>
+<input class="mt-1 block w-full bg-input-background-dark border-input-border-dark focus:border-primary focus:ring-primary rounded-xl p-4 text-text-primary-dark placeholder-stone-500" id="student-number" placeholder="Enter your registration number" type="text"/>
+</div>
+<div>
+<label class="text-sm font-medium text-stone-300" for="email">Student Email</label>
+<input class="mt-1 block w-full bg-input-background-dark border-input-border-dark focus:border-primary focus:ring-primary rounded-xl p-4 text-text-primary-dark placeholder-stone-500" id="email" placeholder="Enter your email" type="email"/>
+</div>
+<div>
+<label class="text-sm font-medium text-stone-300" for="password">Password</label>
+<input class="mt-1 block w-full bg-input-background-dark border-input-border-dark focus:border-primary focus:ring-primary rounded-xl p-4 text-text-primary-dark placeholder-stone-500" id="password" placeholder="Enter your password" type="password"/>
+</div>
+<div>
+<label class="text-sm font-medium text-stone-300" for="confirm-password">Confirm Password</label>
+<input class="mt-1 block w-full bg-input-background-dark border-input-border-dark focus:border-primary focus:ring-primary rounded-xl p-4 text-text-primary-dark placeholder-stone-500" id="confirm-password" placeholder="Confirm your password" type="password"/>
+</div>
+</div>
+<div class="flex items-center space-x-3">
+<input class="h-5 w-5 rounded border-stone-600 bg-stone-800/50 text-primary focus:ring-primary form-checkbox" id="terms" name="terms" type="checkbox"/>
+<label class="text-sm text-stone-400" for="terms">I agree to the <a class="font-medium text-primary hover:underline" href="Login.html">Terms &amp; Conditions</a></label>
+</div>
+</div>
+</main>
+<footer class="p-6">
+<button class="w-full bg-primary text-white font-bold py-4 px-4 rounded-xl shadow-lg shadow-primary/30 hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary dark:focus:ring-offset-background-dark">
+            Sign Up
+        </button>
+<p class="text-center text-sm text-stone-400 mt-6">
+            Already have an account? <a class="font-medium text-primary hover:underline" href="Home.html">Sign In</a>
+</p>
+</footer>
+</div>
+
+<script>
+    const themeToggleBtn = document.getElementById('theme-toggle');
+    const themeIcon = document.getElementById('theme-icon');
+    const htmlElement = document.documentElement;
+
+    // Check for saved theme preference
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+        if (savedTheme === 'dark') {
+            htmlElement.classList.add('dark');
+            themeIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 18v1m9-10h-1M4 10H3m18.5 0a9 9 0 11-17 0 9 9 0 0117 0z"></path>`;
+        } else {
+            htmlElement.classList.remove('dark');
+            themeIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 12.21a9 9 0 11-8.153 8.153 9.04 9.04 0 011.01-.838 8.999 8.999 0 001.027-1.649 8.985 8.985 0 001.147-2.673 8.978 8.978 0 001.79-3.658c0-.002.001-.004.002-.006z"></path>`;
+        }
+    } else {
+        // Default to dark mode if no preference is set
+        htmlElement.classList.add('dark');
+        themeIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 18v1m9-10h-1M4 10H3m18.5 0a9 9 0 11-17 0 9 9 0 0117 0z"></path>`;
+    }
+
+    themeToggleBtn.addEventListener('click', () => {
+        htmlElement.classList.toggle('dark');
+
+        if (htmlElement.classList.contains('dark')) {
+            localStorage.setItem('theme', 'dark');
+            themeIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 18v1m9-10h-1M4 10H3m18.5 0a9 9 0 11-17 0 9 9 0 0117 0z"></path>`;
+        } else {
+            localStorage.setItem('theme', 'light');
+            themeIcon.innerHTML = `<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 12.21a9 9 0 11-8.153 8.153 9.04 9.04 0 011.01-.838 8.999 8.999 0 001.027-1.649 8.985 8.985 0 001.147-2.673 8.978 8.978 0 001.79-3.658c0-.002.001-.004.002-.006z"></path>`;
+        }
+    });
+</script>
+</body>
+</html>

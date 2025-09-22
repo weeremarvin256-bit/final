@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<link crossorigin="" rel="preconnect" href="https://fonts.gstatic.com/"/>
+<link as="style" rel="stylesheet" onload="this.rel='stylesheet'" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Noto+Sans%3Awght%40400%3B500%3B700%3B900&amp;family=Public+Sans%3Awght%40400%3B500%3B700%3B900"/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#13a4ec",
+              "background-light": "#f6f7f8",
+              "background-dark": "#101c22",
+            },
+            fontFamily: {
+              display: ["Public Sans"],
+            },
+            borderRadius: { DEFAULT: "0.5rem", lg: "1rem", xl: "1.5rem", full: "9999px" },
+          },
+        },
+      };
+    </script>
+<title>Stitch Design</title>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display">
+<div class="relative flex h-screen min-h-screen w-full flex-col justify-between">
+<div class="flex-grow overflow-y-auto">
+<header class="sticky top-0 z-10 flex items-center justify-between border-b border-background-light/80 bg-background-light/80 p-4 backdrop-blur-sm dark:border-background-dark/80 dark:bg-background-dark/80">
+<div class="flex items-center gap-2">
+<button class="flex h-10 w-10 items-center justify-center rounded-full bg-white text-primary shadow-sm dark:bg-background-dark/70 dark:text-primary">
+<span class="material-symbols-outlined"> filter_list </span>
+</button>
+<div class="text-lg font-bold text-black dark:text-white">Community</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-white shadow-md">
+<span class="material-symbols-outlined"> add </span>
+</button>
+</div>
+</header>
+<main class="flex flex-col gap-4 p-4">
+<div class="flex flex-wrap gap-2">
+<button class="rounded-full border border-primary px-4 py-1 text-sm font-medium text-primary hover:bg-primary hover:text-white dark:border-primary dark:text-white dark:hover:bg-primary dark:hover:text-white">All</button>
+<button class="rounded-full border border-gray-300 px-4 py-1 text-sm font-medium text-gray-600 hover:bg-primary hover:text-white dark:border-background-dark/70 dark:text-white/70 dark:hover:bg-primary dark:hover:text-white">Exams</button>
+<button class="rounded-full border border-gray-300 px-4 py-1 text-sm font-medium text-gray-600 hover:bg-primary hover:text-white dark:border-background-dark/70 dark:text-white/70 dark:hover:bg-primary dark:hover:text-white">Study Tips</button>
+<button class="rounded-full border border-gray-300 px-4 py-1 text-sm font-medium text-gray-600 hover:bg-primary hover:text-white dark:border-background-dark/70 dark:text-white/70 dark:hover:bg-primary dark:hover:text-white">Campus Life</button>
+<button class="rounded-full border border-gray-300 px-4 py-1 text-sm font-medium text-gray-600 hover:bg-primary hover:text-white dark:border-background-dark/70 dark:text-white/70 dark:hover:bg-primary dark:hover:text-white">General</button>
+</div>
+<article class="relative overflow-hidden rounded-xl bg-white p-6 shadow-lg dark:bg-background-dark/70">
+<div class="absolute inset-x-0 top-0 h-20 bg-primary/10 dark:bg-primary/20"></div>
+<div class="relative z-10">
+<div class="flex items-center justify-between">
+<h2 class="text-xl font-bold leading-relaxed text-black dark:text-white">How do you deal with stress during exams?</h2>
+<span class="rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary dark:bg-primary/20 dark:text-primary">Exams</span>
+</div>
+<p class="mt-2 text-sm text-black/70 dark:text-white/70">Posted by Anonymous · 2h</p>
+<p class="mt-4 text-base text-black/80 dark:text-white/80">Exam periods can be incredibly stressful. I find that setting a strict study schedule, taking short breaks every hour, and ensuring I get at least 7-8 hours of sleep makes a huge difference. Also, listening to calming music during study sessions helps me focus and relax.</p>
+<div class="mt-6 flex items-center justify-start gap-6">
+<button class="flex items-center gap-1.5 text-black/60 hover:text-primary dark:text-white/60">
+<span class="material-symbols-outlined text-xl"> favorite_border </span>
+<span class="text-sm font-medium">Like</span>
+</button>
+<button class="flex items-center gap-1.5 text-black/60 hover:text-primary dark:text-white/60">
+<span class="material-symbols-outlined text-xl"> chat_bubble_outline </span>
+<span class="text-sm font-medium">Comment</span>
+</button>
+</div>
+</div>
+</article>
+<article class="relative overflow-hidden rounded-xl bg-white p-6 shadow-lg dark:bg-background-dark/70">
+<div class="absolute inset-x-0 top-0 h-20 bg-primary/10 dark:bg-primary/20"></div>
+<div class="relative z-10">
+<div class="flex items-center justify-between">
+<h2 class="text-xl font-bold leading-relaxed text-black dark:text-white">Tips for staying focused while studying?</h2>
+<span class="rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary dark:bg-primary/20 dark:text-primary">Study Tips</span>
+</div>
+<p class="mt-2 text-sm text-black/70 dark:text-white/70">Posted by Anonymous · 4h</p>
+<p class="mt-4 text-base text-black/80 dark:text-white/80">To stay focused, I try the Pomodoro Technique. 25 minutes of focused work, then a 5-minute break. I also make sure my study environment is free from distractions – phone on silent and away, notifications off. Sometimes, changing study locations can also help reset my focus.</p>
+<div class="mt-6 flex items-center justify-start gap-6">
+<button class="flex items-center gap-1.5 text-black/60 hover:text-primary dark:text-white/60">
+<span class="material-symbols-outlined text-xl"> favorite_border </span>
+<span class="text-sm font-medium">Like</span>
+</button>
+<button class="flex items-center gap-1.5 text-black/60 hover:text-primary dark:text-white/60">
+<span class="material-symbols-outlined text-xl"> chat_bubble_outline </span>
+<span class="text-sm font-medium">Comment</span>
+</button>
+</div>
+</div>
+</article>
+<article class="relative overflow-hidden rounded-xl bg-white p-6 shadow-lg dark:bg-background-dark/70">
+<div class="absolute inset-x-0 top-0 h-20 bg-primary/10 dark:bg-primary/20"></div>
+<div class="relative z-10">
+<div class="flex items-center justify-between">
+<h2 class="text-xl font-bold leading-relaxed text-black dark:text-white">What are your favorite study spots on campus?</h2>
+<span class="rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary dark:bg-primary/20 dark:text-primary">Campus Life</span>
+</div>
+<p class="mt-2 text-sm text-black/70 dark:text-white/70">Posted by Anonymous · 6h</p>
+<p class="mt-4 text-base text-black/80 dark:text-white/80">I love the quiet corner on the third floor of the main library. It's usually less crowded and has great natural light. The student union cafe also has a good vibe if I need background noise, but I tend to prefer quieter spots for deep work.</p>
+<div class="mt-6 flex items-center justify-start gap-6">
+<button class="flex items-center gap-1.5 text-primary">
+<span class="material-symbols-outlined text-xl"> favorite </span>
+<span class="text-sm font-medium">Liked</span>
+</button>
+<button class="flex items-center gap-1.5 text-black/60 hover:text-primary dark:text-white/60">
+<span class="material-symbols-outlined text-xl"> chat_bubble_outline </span>
+<span class="text-sm font-medium">Comment</span>
+</button>
+</div>
+</div>
+</article>
+<article class="relative overflow-hidden rounded-xl bg-white p-6 shadow-lg dark:bg-background-dark/70">
+<div class="absolute inset-x-0 top-0 h-20 bg-primary/10 dark:bg-primary/20"></div>
+<div class="relative z-10">
+<div class="flex items-center justify-between">
+<h2 class="text-xl font-bold leading-relaxed text-black dark:text-white">How to balance social life and academics?</h2>
+<span class="rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary dark:bg-primary/20 dark:text-primary">General</span>
+</div>
+<p class="mt-2 text-sm text-black/70 dark:text-white/70">Posted by Anonymous · 8h</p>
+<p class="mt-4 text-base text-black/80 dark:text-white/80">Balancing is key! I plan my social activities around my academic commitments. Using a planner helps me visualize my week and allocate time for both. It's also important to say 'no' sometimes if you're feeling overwhelmed. Quality over quantity with social interactions.</p>
+<div class="mt-6 flex items-center justify-start gap-6">
+<button class="flex items-center gap-1.5 text-black/60 hover:text-primary dark:text-white/60">
+<span class="material-symbols-outlined text-xl"> favorite_border </span>
+<span class="text-sm font-medium">Like</span>
+</button>
+<button class="flex items-center gap-1.5 text-black/60 hover:text-primary dark:text-white/60">
+<span class="material-symbols-outlined text-xl"> chat_bubble_outline </span>
+<span class="text-sm font-medium">Comment</span>
+</button>
+</div>
+</div>
+</article>
+</main>
+</div>
+<nav class="border-t border-background-light/80 bg-background-light/80 px-4 pt-2 pb-5 dark:border-background-dark/80 dark:bg-background-dark/80">
+<div class="flex justify-around">
+<a class="flex flex-col items-center gap-1 text-black/60 dark:text-white/60" href="Home.html">
+<span class="material-symbols-outlined"> home </span>
+<span class="text-xs font-medium">Home</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-black/60 dark:text-white/60" href="Library.html">
+<span class="material-symbols-outlined"> bookmark </span>
+<span class="text-xs font-medium">Library</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-primary" href="Community.html">
+<span class="material-symbols-outlined"> group </span>
+<span class="text-xs font-medium">Community</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-black/60 dark:text-white/60" href="Mood.html">
+<span class="material-symbols-outlined"> sentiment_satisfied </span>
+<span class="text-xs font-medium">Mood</span>
+</a>
+</div>
+</nav>
+</div>
+</body>
+</html>
