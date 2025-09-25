@@ -2,7 +2,7 @@
 <html lang="en"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Stitch Design</title>
+<title>YOURPER</title>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&amp;display=swap" rel="stylesheet"/>
@@ -165,14 +165,15 @@
 <footer class="sticky bottom-0 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm">
 <div class="px-4 pb-4 pt-2">
 <div class="flex gap-4">
-<button class="flex-1 flex items-center justify-center gap-2 p-4 rounded-xl bg-red-500/10 dark:bg-red-500/20 text-red-600 dark:text-red-400">
-<span class="material-symbols-outlined">sos</span>
-<span class="font-bold">Emergency Support</span>
-</button>
-<button class="flex-1 flex items-center justify-center gap-2 p-4 rounded-xl bg-primary/10 dark:bg-primary/20 text-primary">
-<span class="material-symbols-outlined">support_agent</span>
-<span class="font-bold">Talk to a Pro</span>
-</button>
+  <button id="emergencyBtn" class="flex-1 flex items-center justify-center gap-2 p-4 rounded-xl bg-red-500/10 dark:bg-red-500/20 text-red-600 dark:text-red-400">
+    <span class="material-symbols-outlined">sos</span>
+    <span class="font-bold">Emergency Support</span>
+  </button>
+
+  <button id="proBtn" class="flex-1 flex items-center justify-center gap-2 p-4 rounded-xl bg-primary/10 dark:bg-primary/20 text-primary">
+    <span class="material-symbols-outlined">support_agent</span>
+    <span class="font-bold">Talk to a Pro</span>
+  </button>
 </div>
 </div>
 <div class="border-t border-primary/10">
@@ -198,5 +199,65 @@
 <div class="h-4 bg-background-light dark:bg-background-dark"></div>
 </footer>
 </div>
+ <!-- Emergency Modal -->
+<div id="emergencyModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/40 px-4" role="dialog" aria-modal="true" aria-labelledby="emergencyTitle">
+  <div class="bg-white dark:bg-gray-800 rounded-xl max-w-md w-full p-6 mx-auto">
+    <div class="flex justify-between items-start gap-4">
+      <div>
+        <h3 id="emergencyTitle" class="text-lg font-bold text-background-dark dark:text-background-light">Emergency Support</h3>
+        <p class="text-sm text-background-dark/60 dark:text-background-light/60 mt-1">If you are in immediate danger or need urgent help, please call one of the numbers below.</p>
+      </div>
+      <button id="emergencyClose" class="text-background-dark/60 dark:text-background-light/60">✕</button>
+    </div>
 
+    <div class="mt-4 space-y-3">
+      <a href="tel:+256414000000" class="block w-full text-center px-4 py-3 bg-red-600 text-white rounded-lg">Call Campus Security — +256 414 000000</a>
+      <a href="tel:+256774000000" class="block w-full text-center px-4 py-3 bg-amber-500 text-white rounded-lg">Call Mental Health Hotline — +256 774 000000</a>
+      <a href="https://wa.me/256774000000" target="_blank" rel="noopener" class="block w-full text-center px-4 py-3 border rounded-lg">WhatsApp Support — +256 774 000000</a>
+    </div>
+
+    <div class="mt-4 flex justify-end">
+      <button id="emergencyClose2" class="px-4 py-2 rounded-lg border">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Talk to a Pro Modal -->
+<div id="proModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/40 px-4" role="dialog" aria-modal="true" aria-labelledby="proTitle">
+  <div class="bg-white dark:bg-gray-800 rounded-xl max-w-md w-full p-6 mx-auto">
+    <div class="flex justify-between items-start gap-4">
+      <div>
+        <h3 id="proTitle" class="text-lg font-bold text-background-dark dark:text-background-light">Talk to a Pro</h3>
+        <p class="text-sm text-background-dark/60 dark:text-background-light/60 mt-1">Choose how you'd like to connect with a certified counselor or mental health worker.</p>
+      </div>
+      <button id="proClose" class="text-background-dark/60 dark:text-background-light/60">✕</button>
+    </div>
+
+    <div class="mt-4 space-y-3">
+      <!-- direct call -->
+      <a href="tel:+256782000000" class="block w-full text-center px-4 py-3 bg-primary text-white rounded-lg">Call a Pro — +256 782 000000</a>
+
+      <!-- schedule demo: opens small form and saves to localStorage (demo only) -->
+      <div id="scheduleArea" class="border rounded-lg p-3">
+        <p class="text-sm text-background-dark/60 dark:text-background-light/60 mb-2">Schedule a session (demo):</p>
+        <form id="scheduleForm" class="space-y-2">
+          <input name="contact" placeholder="Phone or WhatsApp (optional)" class="w-full px-3 py-2 border rounded" />
+          <input name="date" type="datetime-local" class="w-full px-3 py-2 border rounded" />
+          <div class="flex gap-2">
+            <button type="submit" class="flex-1 px-3 py-2 bg-primary text-white rounded-lg">Request session</button>
+            <button type="button" id="scheduleCancel" class="px-3 py-2 border rounded-lg">Cancel</button>
+          </div>
+        </form>
+        <div id="scheduleResult" class="hidden text-sm text-background-dark/60 dark:text-background-light/60 mt-2"></div>
+      </div>
+
+      <!-- chat link or fallback -->
+      <button id="chatBtn" class="block w-full text-center px-4 py-3 border rounded-lg">Start Anonymous Chat</button>
+    </div>
+
+    <div class="mt-4 flex justify-end">
+      <button id="proClose2" class="px-4 py-2 rounded-lg border">Close</button>
+    </div>
+  </div>
+</div>   
 </body></html>
