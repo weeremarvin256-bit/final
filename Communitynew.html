@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link crossorigin="" rel="preconnect" href="https://fonts.gstatic.com/"/>
+<link as="style" rel="stylesheet" onload="this.rel='stylesheet'"
+  href="https://fonts.googleapis.com/css2?display=swap&amp;family=Noto+Sans%3Awght%40400%3B500%3B700%3B900&amp;family=Public+Sans%3Awght%40400%3B500%3B700%3B900"/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          primary: "#13a4ec",
+          "background-light": "#f6f7f8",
+          "background-dark": "#101c22",
+        },
+        fontFamily: {
+          display: ["Public Sans"],
+        },
+        borderRadius: { DEFAULT: "0.5rem", lg: "1rem", xl: "1.5rem", full: "9999px" },
+      },
+    },
+  };
+</script>
+<title>Community — Make a Post Demo</title>
+<style>
+  body { min-height: max(884px, 100dvh); }
+  /* small visual tweak for comment box */
+  .comment-box { display:none; }
+</style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display">
+<div class="relative flex h-screen min-h-screen w-full flex-col justify-between">
+  <div class="flex-grow overflow-y-auto">
+    <header class="sticky top-0 z-10 flex items-center justify-between border-b border-background-light/80 bg-background-light/80 p-4 backdrop-blur-sm dark:border-background-dark/80 dark:bg-background-dark/80">
+      <div class="flex items-center gap-2">
+        <button class="flex h-10 w-10 items-center justify-center rounded-full bg-white text-primary shadow-sm dark:bg-background-dark/70 dark:text-primary">
+          <span class="material-symbols-outlined"> filter_list </span>
+        </button>
+        <div class="text-lg font-bold text-black dark:text-white">Community</div>
+      </div>
+      <div class="flex items-center gap-2">
+        <!-- ADD BUTTON: give it an id for JS -->
+        <button id="openAddBtn" class="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-white shadow-md" title="Make a post">
+          <span class="material-symbols-outlined"> add </span>
+        </button>
+      </div>
+    </header>
+
+    <main class="flex flex-col gap-4 p-4">
+      <div class="flex flex-wrap gap-2">
+        <button class="rounded-full border border-primary px-4 py-1 text-sm font-medium text-primary hover:bg-primary hover:text-white dark:border-primary dark:text-white dark:hover:bg-primary dark:hover:text-white">All</button>
+        <button class="rounded-full border border-gray-300 px-4 py-1 text-sm font-medium text-gray-600 hover:bg-primary hover:text-white dark:border-background-dark/70 dark:text-white/70 dark:hover:bg-primary dark:hover:text-white">Exams</button>
+        <button class="rounded-full border border-gray-300 px-4 py-1 text-sm font-medium text-gray-600 hover:bg-primary hover:text-white dark:border-background-dark/70 dark:text-white/70 dark:hover:bg-primary dark:hover:text-white">Study Tips</button>
+        <button class="rounded-full border border-gray-300 px-4 py-1 text-sm font-medium text-gray-600 hover:bg-primary hover:text-white dark:border-background-dark/70 dark:text-white/70 dark:hover:bg-primary dark:hover:text-white">Campus Life</button>
+        <button class="rounded-full border border-gray-300 px-4 py-1 text-sm font-medium text-gray-600 hover:bg-primary hover:text-white dark:border-background-dark/70 dark:text-white/70 dark:hover:bg-primary dark:hover:text-white">General</button>
+      </div>
+
+      <!-- FEED container: newly created posts will be prepended HERE -->
+      <div id="feed" class="flex flex-col gap-4">
+
+        <!-- Existing static articles (kept for initial content) -->
+        <article class="relative overflow-hidden rounded-xl bg-white p-6 shadow-lg dark:bg-background-dark/70">
+          <div class="absolute inset-x-0 top-0 h-20 bg-primary/10 dark:bg-primary/20"></div>
+          <div class="relative z-10">
+            <div class="flex items-center justify-between">
+              <h2 class="text-xl font-bold leading-relaxed text-black dark:text-white">How do you deal with stress during exams?</h2>
+              <span class="rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary dark:bg-primary/20 dark:text-primary">Exams</span>
+            </div>
+            <p class="mt-2 text-sm text-black/70 dark:text-white/70">Posted by Anonymous · 2h</p>
+            <p class="mt-4 text-base text-black/80 dark:text-white/80">Exam periods can be incredibly stressful. I find that setting a strict study schedule, taking short breaks every hour, and ensuring I get at least 7-8 hours of sleep makes a huge difference. Also, listening to calming music during study sessions helps me focus and relax.</p>
+            <div class="mt-6 flex items-center justify-start gap-6">
+              <button class="like-btn flex items-center gap-1.5 text-black/60 hover:text-primary dark:text-white/60">
+                <span class="material-symbols-outlined text-xl"> favorite_border </span>
+                <span class="text-sm font-medium">Like</span>
+              </button>
+              <button class="comment-toggle flex items-center gap-1.5 text-black/60 hover:text-primary dark:text-white/60">
+                <span class="material-symbols-outlined text-xl"> chat_bubble_outline </span>
+                <span class="text-sm font-medium">Comment</span>
+              </button>
+            </div>
+            <div class="mt-3 comment-box">
+              <input class="w-full px-3 py-2 border rounded mb-2" placeholder="Write a comment (demo)" />
+              <div class="flex justify-end gap-2">
+                <button class="px-3 py-1 border rounded comment-submit">Send</button>
+                <button class="px-3 py-1 border rounded comment-cancel">Cancel</button>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <!-- More static articles... (you can keep the rest from your original page) -->
+        <!-- (I included the rest below unchanged) -->
+
+        <article class="relative overflow-hidden rounded-xl bg-white p-6 shadow-lg dark:bg-background-dark/70">
+          <div class="absolute inset-x-0 top-0 h-20 bg-primary/10 dark:bg-primary/20"></div>
+          <div class="relative z-10">
+            <div class="flex items-center justify-between">
+              <h2 class="text-xl font-bold leading-relaxed text-black dark:text-white">Tips for staying focused while studying?</h2>
+              <span class="rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary dark:bg-primary/20 dark:text-primary">Study Tips</span>
+            </div>
+            <p class="mt-2 text-sm text-black/70 dark:text-white/70">Posted by Anonymous · 4h</p>
+            <p class="mt-4 text-base text-black/80 dark:text-white/80">To stay focused, I try the Pomodoro Technique. 25 minutes of focused work, then a 5-minute break. I also make sure my study environment is free from distractions – phone on silent and away, notifications off. Sometimes, changing study locations can also help reset my focus.</p>
+            <div class="mt-6 flex items-center justify-start gap-6">
+              <button class="like-btn flex items-center gap-1.5 text-black/60 hover:text-primary dark:text-white/60">
+                <span class="material-symbols-outlined text-xl"> favorite_border </span>
+                <span class="text-sm font-medium">Like</span>
+              </button>
+              <button class="comment-toggle flex items-center gap-1.5 text-black/60 hover:text-primary dark:text-white/60">
+                <span class="material-symbols-outlined text-xl"> chat_bubble_outline </span>
+                <span class="text-sm font-medium">Comment</span>
+              </button>
+            </div>
+            <div class="mt-3 comment-box">
+              <input class="w-full px-3 py-2 border rounded mb-2" placeholder="Write a comment (demo)" />
+              <div class="flex justify-end gap-2">
+                <button class="px-3 py-1 border rounded comment-submit">Send</button>
+                <button class="px-3 py-1 border rounded comment-cancel">Cancel</button>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="relative overflow-hidden rounded-xl bg-white p-6 shadow-lg dark:bg-background-dark/70">
+          <div class="absolute inset-x-0 top-0 h-20 bg-primary/10 dark:bg-primary/20"></div>
+          <div class="relative z-10">
+            <div class="flex items-center justify-between">
+              <h2 class="text-xl font-bold leading-relaxed text-black dark:text-white">What are your favorite study spots on campus?</h2>
+              <span class="rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary dark:bg-primary/20 dark:text-primary">Campus Life</span>
+            </div>
+            <p class="mt-2 text-sm text-black/70 dark:text-white/70">Posted by Anonymous · 6h</p>
+            <p class="mt-4 text-base text-black/80 dark:text-white/80">I love the quiet corner on the third floor of the main library. It's usually less crowded and has great natural light. The student union cafe also has a good vibe if I need background noise, but I tend to prefer quieter spots for deep work.</p>
+            <div class="mt-6 flex items-center justify-start gap-6">
+              <button class="like-btn flex items-center gap-1.5 text-primary">
+                <span class="material-symbols-outlined text-xl"> favorite </span>
+                <span class="text-sm font-medium">Liked</span>
+              </button>
+              <button class="comment-toggle flex items-center gap-1.5 text-black/60 hover:text-primary dark:text-white/60">
+                <span class="material-symbols-outlined text-xl"> chat_bubble_outline </span>
+                <span class="text-sm font-medium">Comment</span>
+              </button>
+            </div>
+            <div class="mt-3 comment-box">
+              <input class="w-full px-3 py-2 border rounded mb-2" placeholder="Write a comment (demo)" />
+              <div class="flex justify-end gap-2">
+                <button class="px-3 py-1 border rounded comment-submit">Send</button>
+                <button class="px-3 py-1 border rounded comment-cancel">Cancel</button>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="relative overflow-hidden rounded-xl bg-white p-6 shadow-lg dark:bg-background-dark/70">
+          <div class="absolute inset-x-0 top-0 h-20 bg-primary/10 dark:bg-primary/20"></div>
+          <div class="relative z-10">
+            <div class="flex items-center justify-between">
+              <h2 class="text-xl font-bold leading-relaxed text-black dark:text-white">How to balance social life and academics?</h2>
+              <span class="rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary dark:bg-primary/20 dark:text-primary">General</span>
+            </div>
+            <p class="mt-2 text-sm text-black/70 dark:text-white/70">Posted by Anonymous · 8h</p>
+            <p class="mt-4 text-base text-black/80 dark:text-white/80">Balancing is key! I plan my social activities around my academic commitments. Using a planner helps me visualize my week and allocate time for both. It's also important to say 'no' sometimes if you're feeling overwhelmed. Quality over quantity with social interactions.</p>
+            <div class="mt-6 flex items-center justify-start gap-6">
+              <button class="like-btn flex items-center gap-1.5 text-black/60 hover:text-primary dark:text-white/60">
+                <span class="material-symbols-outlined text-xl"> favorite_border </span>
+                <span class="text-sm font-medium">Like</span>
+              </button>
+              <button class="comment-toggle flex items-center gap-1.5 text-black/60 hover:text-primary dark:text-white/60">
+                <span class="material-symbols-outlined text-xl"> chat_bubble_outline </span>
+                <span class="text-sm font-medium">Comment</span>
+              </button>
+            </div>
+            <div class="mt-3 comment-box">
+              <input class="w-full px-3 py-2 border rounded mb-2" placeholder="Write a comment (demo)" />
+              <div class="flex justify-end gap-2">
+                <button class="px-3 py-1 border rounded comment-submit">Send</button>
+                <button class="px-3 py-1 border rounded comment-cancel">Cancel</button>
+              </div>
+            </div>
+          </div>
+        </article>
+
+      </div> <!-- end feed -->
+    </main>
+  </div>
+
+  <nav class="border-t border-background-light/80 bg-background-light/80 px-4 pt-2 pb-5 dark:border-background-dark/80 dark:bg-background-dark/80">
+    <div class="flex justify-around">
+      <a class="flex flex-col items-center gap-1 text-black/60 dark:text-white/60" href="Home.html">
+        <span class="material-symbols-outlined"> home </span>
+        <span class="text-xs font-medium">Home</span>
+      </a>
+      <a class="flex flex-col items-center gap-1 text-black/60 dark:text-white/60" href="Library.html">
+        <span class="material-symbols-outlined"> bookmark </span>
+        <span class="text-xs font-medium">Library</span>
+      </a>
+      <a class="flex flex-col items-center gap-1 text-primary" href="Community.html">
+        <span class="material-symbols-outlined"> group </span>
+        <span class="text-xs font-medium">Community</span>
+      </a>
+      <a class="flex flex-col items-center gap-1 text-black/60 dark:text-white/60" href="Mood.html">
+        <span class="material-symbols-outlined"> sentiment_satisfied </span>
+        <span class="text-xs font-medium">Mood</span>
+      </a>
+    </div>
+  </nav>
+</div>
+
+<!-- ADD POST MODAL (hidden by default) -->
+<div id="addModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/40 px-4" role="dialog" aria-modal="true" aria-labelledby="addTitle">
+  <div class="bg-white dark:bg-gray-800 rounded-xl max-w-xl w-full p-6 mx-auto">
+    <div class="flex justify-between items-start gap-4">
+      <div>
+        <h3 id="addTitle" class="text-lg font-bold text-background-dark dark:text-background-light">Create a Post</h3>
+        <p class="text-sm text-background-dark/60 dark:text-background-light/60 mt-1">Share a tip, ask a question, or start a conversation with other students.</p>
+      </div>
+      <button id="closeAdd" class="text-background-dark/60 dark:text-background-light/60">✕</button>
+    </div>
+
+    <form id="addForm" class="mt-4 space-y-3">
+      <div>
+        <label class="text-sm font-medium">Title</label>
+        <input name="title" required class="w-full mt-1 px-3 py-2 border rounded" placeholder="Short, clear title (e.g. Study tips for finals)" />
+      </div>
+
+      <div>
+        <label class="text-sm font-medium">Category</label>
+        <select name="category" class="w-full mt-1 px-3 py-2 border rounded">
+          <option>General</option>
+          <option>Exams</option>
+          <option>Study Tips</option>
+          <option>Campus Life</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="text-sm font-medium">Content</label>
+        <textarea name="content" required rows="5" class="w-full mt-1 px-3 py-2 border rounded" placeholder="Write your post..."></textarea>
+      </div>
+
+      <div class="flex justify-end gap-2">
+        <button type="button" id="cancelAdd" class="px-4 py-2 border rounded">Cancel</button>
+        <button type="submit" class="px-4 py-2 bg-primary text-white rounded">Post</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  (function () {
+    // Elements
+    const openAddBtn = document.getElementById('openAddBtn');
+    const addModal = document.getElementById('addModal');
+    const closeAdd = document.getElementById('closeAdd');
+    const cancelAdd = document.getElementById('cancelAdd');
+    const addForm = document.getElementById('addForm');
+    const feed = document.getElementById('feed');
+
+    const POSTS_KEY = 'community_posts_v1';
+
+    function openModal() {
+      addModal.classList.remove('hidden');
+      addModal.classList.add('flex');
+      // focus first input
+      const first = addModal.querySelector('input[name="title"]');
+      if (first) first.focus();
+    }
+    function closeModal() {
+      addModal.classList.add('hidden');
+      addModal.classList.remove('flex');
+    }
+
+    // Attach open/close handlers
+    openAddBtn && openAddBtn.addEventListener('click', openModal);
+    closeAdd && closeAdd.addEventListener('click', closeModal);
+    cancelAdd && cancelAdd.addEventListener('click', (e) => { e.preventDefault(); closeModal(); });
+
+    // Escape key closes modal
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeModal();
+    });
+
+    // click-outside close
+    addModal && addModal.addEventListener('click', (e) => {
+      if (e.target === addModal) closeModal();
+    });
+
+    // Utility: format "time ago" (very simple)
+    function timeAgo(iso) {
+      const diff = Date.now() - new Date(iso).getTime();
+      const mins = Math.floor(diff / 60000);
+      if (mins < 1) return 'just now';
+      if (mins < 60) return mins + 'm';
+      const hrs = Math.floor(mins / 60);
+      if (hrs < 24) return hrs + 'h';
+      const days = Math.floor(hrs / 24);
+      return days + 'd';
+    }
+
+    // Load existing posts from localStorage
+    function loadPosts() {
+      try {
+        const raw = localStorage.getItem(POSTS_KEY);
+        return raw ? JSON.parse(raw) : [];
+      } catch (err) {
+        return [];
+      }
+    }
+
+    // Save posts array
+    function savePosts(posts) {
+      try { localStorage.setItem(POSTS_KEY, JSON.stringify(posts)); } catch (e) { /* ignore */ }
+    }
+
+    // Render a single post DOM node (returns element)
+    function renderPost(post) {
+      const el = document.createElement('article');
+      el.className = 'relative overflow-hidden rounded-xl bg-white p-6 shadow-lg dark:bg-background-dark/70';
+      el.dataset.id = post.id;
+
+      const html = `
+        <div class="absolute inset-x-0 top-0 h-20 bg-primary/10 dark:bg-primary/20"></div>
+        <div class="relative z-10">
+          <div class="flex items-center justify-between">
+            <h2 class="text-xl font-bold leading-relaxed text-black dark:text-white">${escapeHtml(post.title)}</h2>
+            <span class="rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-primary dark:bg-primary/20 dark:text-primary">${escapeHtml(post.category)}</span>
+          </div>
+          <p class="mt-2 text-sm text-black/70 dark:text-white/70">Posted by ${escapeHtml(post.author || 'Anonymous')} · ${timeAgo(post.createdAt)}</p>
+          <p class="mt-4 text-base text-black/80 dark:text-white/80">${nl2br(escapeHtml(post.content))}</p>
+          <div class="mt-6 flex items-center justify-start gap-6">
+            <button class="like-btn flex items-center gap-1.5 text-black/60 hover:text-primary dark:text-white/60">
+              <span class="material-symbols-outlined text-xl"> ${post.liked ? 'favorite' : 'favorite_border'} </span>
+              <span class="text-sm font-medium">${post.likes || 0}</span>
+            </button>
+            <button class="comment-toggle flex items-center gap-1.5 text-black/60 hover:text-primary dark:text-white/60">
+              <span class="material-symbols-outlined text-xl"> chat_bubble_outline </span>
+              <span class="text-sm font-medium">Comment</span>
+            </button>
+          </div>
+          <div class="mt-3 comment-box">
+            <input class="w-full px-3 py-2 border rounded mb-2 comment-input" placeholder="Write a comment (demo)" />
+            <div class="flex justify-end gap-2">
+              <button class="px-3 py-1 border rounded comment-submit">Send</button>
+              <button class="px-3 py-1 border rounded comment-cancel">Cancel</button>
+            </div>
+          </div>
+        </div>
+      `;
+      el.innerHTML = html;
+
+      // Attach like handler
+      const likeBtn = el.querySelector('.like-btn');
+      likeBtn && likeBtn.addEventListener('click', () => {
+        const posts = loadPosts();
+        const idx = posts.findIndex(p => String(p.id) === String(post.id));
+        if (idx > -1) {
+          posts[idx].liked = !posts[idx].liked;
+          posts[idx].likes = posts[idx].likes ? (posts[idx].liked ? posts[idx].likes + 1 : Math.max(0, posts[idx].likes - 1)) : (posts[idx].liked ? 1 : 0);
+          savePosts(posts);
+          // update UI
+          const span = likeBtn.querySelector('span.text-sm');
+          const icon = likeBtn.querySelector('.material-symbols-outlined');
+          span && (span.textContent = posts[idx].likes);
+          icon && (icon.textContent = posts[idx].liked ? 'favorite' : 'favorite_border');
+        }
+      });
+
+      // Comment toggle
+      const commentToggle = el.querySelector('.comment-toggle');
+      const commentBox = el.querySelector('.comment-box');
+      const commentInput = el.querySelector('.comment-input');
+      const commentSubmit = el.querySelector('.comment-submit');
+      const commentCancel = el.querySelector('.comment-cancel');
+
+      commentToggle && commentToggle.addEventListener('click', () => {
+        if (!commentBox) return;
+        commentBox.style.display = commentBox.style.display === 'block' ? 'none' : 'block';
+        if (commentBox.style.display === 'block' && commentInput) commentInput.focus();
+      });
+
+      commentCancel && commentCancel.addEventListener('click', () => {
+        if (commentBox) commentBox.style.display = 'none';
+      });
+
+      // Demo comment: save to localStorage as small array on post object
+      commentSubmit && commentSubmit.addEventListener('click', () => {
+        const text = commentInput ? commentInput.value.trim() : '';
+        if (!text) return;
+        const posts = loadPosts();
+        const idx = posts.findIndex(p => String(p.id) === String(post.id));
+        if (idx > -1) {
+          posts[idx].comments = posts[idx].comments || [];
+          posts[idx].comments.push({ text, createdAt: new Date().toISOString() });
+          savePosts(posts);
+          // simple feedback, hide box and clear
+          commentInput.value = '';
+          commentBox.style.display = 'none';
+          alert('Comment saved (demo).');
+        } else {
+          alert('Unable to save comment (demo).');
+        }
+      });
+
+      return el;
+    }
+
+    // Escape HTML
+    function escapeHtml(str = '') {
+      return String(str)
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;');
+    }
+    // newline to <br>
+    function nl2br(s = '') {
+      return s.replace(/\n/g, '<br>');
+    }
+
+    // Render all saved posts above static ones
+    function renderSavedPosts() {
+      // If previously rendered saved posts exist, remove them so we don't duplicate
+      const existingSaved = feed.querySelectorAll('[data-saved="true"]');
+      existingSaved.forEach(n => n.remove());
+
+      const posts = loadPosts() || [];
+      // render newest first
+      posts.slice().reverse().forEach(post => {
+        const node = renderPost(post);
+        node.dataset.saved = 'true';
+        // prepend so newest appears first
+        feed.insertBefore(node, feed.firstChild);
+      });
+    }
+
+    // Handle form submission
+    addForm && addForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const fd = new FormData(addForm);
+      const title = (fd.get('title') || '').toString().trim();
+      const category = (fd.get('category') || 'General').toString();
+      const content = (fd.get('content') || '').toString().trim();
+      if (!title || !content) {
+        alert('Please provide title and content.');
+        return;
+      }
+
+      const newPost = {
+        id: 'p-' + Date.now(),
+        title,
+        category,
+        content,
+        author: 'Anonymous',
+        createdAt: new Date().toISOString(),
+        likes: 0,
+        liked: false,
+        comments: []
+      };
+
+      const posts = loadPosts();
+      posts.push(newPost); // append
+      savePosts(posts);
+
+      // render immediately at top
+      renderSavedPosts();
+
+      // reset & close modal
+      addForm.reset();
+      closeModal();
+      // small UX feedback
+      alert('Post created (demo).');
+    });
+
+    // closeModal wrapper
+    function closeModal() { addModal && addModal.classList.add('hidden'); addModal && addModal.classList.remove('flex'); }
+
+    // open modal wrapper
+    function openModal() { addModal && (addModal.classList.remove('hidden'), addModal.classList.add('flex')); const first = addModal.querySelector('input[name="title"]'); if (first) first.focus(); }
+
+    // Make sure modal open/close functions used by earlier event listeners are present
+    // They were added before but redeclare here to ensure proper closure
+    openAddBtn && openAddBtn.addEventListener('click', () => { openModal(); });
+    closeAdd && closeAdd.addEventListener('click', () => { closeModal(); });
+    cancelAdd && cancelAdd.addEventListener('click', (ev) => { ev.preventDefault(); closeModal(); });
+
+    // On page load render saved posts
+    document.addEventListener('DOMContentLoaded', () => {
+      renderSavedPosts();
+
+      // Attach basic handlers for static content like/comment controls (for demo)
+      document.querySelectorAll('.like-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const icon = btn.querySelector('.material-symbols-outlined');
+          const countSpan = btn.querySelector('.text-sm');
+          if (!countSpan) return;
+          let count = parseInt(countSpan.textContent || '0', 10);
+          const liked = icon && icon.textContent.trim() === 'favorite';
+          if (liked) {
+            icon.textContent = 'favorite_border';
+            count = Math.max(0, count - 1);
+          } else {
+            icon.textContent = 'favorite';
+            count = count + 1;
+          }
+          countSpan.textContent = String(count);
+        });
+      });
+
+      // Toggle comment box on static posts
+      document.querySelectorAll('.comment-toggle').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const parent = btn.closest('article');
+          if (!parent) return;
+          const cb = parent.querySelector('.comment-box');
+          if (!cb) return;
+          cb.style.display = cb.style.display === 'block' ? 'none' : 'block';
+          const input = cb.querySelector('input');
+          input && input.focus();
+        });
+      });
+
+      // Cancel submit on static posts comment boxes
+      document.querySelectorAll('.comment-cancel').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const parent = btn.closest('article');
+          const cb = parent && parent.querySelector('.comment-box');
+          if (cb) cb.style.display = 'none';
+        });
+      });
+
+      // Simple handler for static comment-submit: just show alert (demo)
+      document.querySelectorAll('.comment-submit').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const parent = btn.closest('article');
+          const input = parent && parent.querySelector('.comment-input');
+          if (!input) return;
+          const text = (input.value || '').trim();
+          if (!text) {
+            alert('Please write a comment (demo).');
+            return;
+          }
+          alert('Comment saved (demo).');
+          input.value = '';
+          if (parent.querySelector('.comment-box')) parent.querySelector('.comment-box').style.display = 'none';
+        });
+      });
+    });
+  })();
+</script>
+</body>
+</html>
