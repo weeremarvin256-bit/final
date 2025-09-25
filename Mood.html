@@ -27,7 +27,7 @@
         },
       };
     </script>
-<title>Stitch Design - Minimalist Dark</title>
+<title>YOUPER</title>
 <style>
     body {
       min-height: max(884px, 100dvh);
@@ -155,245 +155,215 @@
 </footer>
 </div>
 <script>
-(function(){
-  // ====== Helpers ======
-  const q = (sel, ctx=document) => ctx.querySelector(sel);
-  const qAll = (sel, ctx=document) => Array.from(ctx.querySelectorAll(sel));
-  function toast(msg, timeout=1800){
-    let t = document.createElement('div');
-    t.textContent = msg;
-    t.style.position = 'fixed';
-    t.style.right = '16px';
-    t.style.bottom = '16px';
-    t.style.background = '#13ec13';
-    t.style.color = '#061006';
-    t.style.padding = '10px 12px';
-    t.style.borderRadius = '8px';
-    t.style.boxShadow = '0 6px 18px rgba(0,0,0,0.3)';
-    t.style.zIndex = 99999;
-    document.body.appendChild(t);
-    setTimeout(()=> t.remove(), timeout);
-  }
+(function () {
+  // Safe start: wait until DOM is available
+  function ready(fn) { if (document.readyState !== 'loading') fn(); else document.addEventListener('DOMContentLoaded', fn); }
 
-  // ====== Find page elements ======
-  // Finds the progress bar container (the one with class 'relative h-2.5')
-  const barContainer = q('div.relative.h-2.5') || q('.relative.h-2.5') || q('.relative');
-  if (!barContainer) {
-    console.warn('Mood bar container not found. Interactive features will not initialize.');
-    return;
-  }
+  ready(function () {
+    // ----- Helpers -----
+    const log = (...a) => console.log('[MoodTracker]', ...a);
+    const STORAGE_KEY = 'mood_entries_v1';
+    const byText = (tag, text) => Array.from(document.getElementsByTagName(tag || 'button')).find(el => (el.textContent || '').trim().toLowerCase().includes((text||'').toLowerCase()));
 
-  // Filled bar (first absolute child)
-  const filled = barContainer.querySelector('div.absolute.h-full') || barContainer.querySelector('.bg-primary');
-  // knob container (the element positioned above)
-  const knobWrapper = barContainer.querySelector(':scope > div.absolute:nth-child(3)') || barContainer.querySelector('[style*="transform"]');
-
-  // Text fields and buttons
-  // textarea: pick the first textarea on page (your note field)
-  const noteInput = q('textarea') || q('textarea.form-input');
-
-  // Save Mood button: find by inner text 'Save Mood'
-  const saveBtn = Array.from(document.querySelectorAll('button')).find(b => (b.innerText||'').trim().toLowerCase().includes('save mood')) || null;
-
-  // Elements to update: overall mood text and percent
-  // We search for the area that contains "Overall Mood" text (lower panel)
-  const overallLabel = Array.from(document.querySelectorAll('p,div,span')).find(n => /Overall Mood/i.test(n.textContent || ''));
-  const overallValue = overallLabel ? overallLabel.closest('div').querySelector('p.text-2xl, p.text-2xl.font-bold') : null;
-  const percentEl = Array.from(document.querySelectorAll('p,div,span')).find(n => /\+?\-?\d+%/.test(n.textContent || '')) || null;
-
-  // Chart SVG: pick the first svg inside the trends container
-  const chartSvg = document.querySelector('svg[viewBox="0 0 472 150"], svg') || null;
-
-  // ====== Data handling ======
-  const STORAGE_KEY = 'mood_entries_v1';
-  function loadEntries(){ try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch(e){ return []; } }
-  function saveEntries(entries){ try { localStorage.setItem(STORAGE_KEY, JSON.stringify(entries)); } catch(e){} }
-
-  // ====== Slider overlay creation ======
-  // We create a range input overlay so users can choose mood 1..5 by dragging/clicking.
-  const slider = document.createElement('input');
-  slider.type = 'range';
-  slider.min = 1;
-  slider.max = 5;
-  slider.step = 1;
-  slider.value = 3; // default neutral
-  slider.setAttribute('aria-label','Select mood');
-  // style it to overlay exactly over the barContainer
-  Object.assign(slider.style, {
-    position: 'absolute',
-    left: '0',
-    top: '0',
-    width: '100%',
-    height: '100%',
-    opacity: 0,
-    zIndex: 5,
-    cursor: 'pointer'
-  });
-
-  // Ensure barContainer has position: relative (already does in your HTML)
-  barContainer.style.position = barContainer.style.position || 'relative';
-  // Insert slider as last child so it overlays
-  barContainer.appendChild(slider);
-
-  // Sync UI when slider changes
-  function updateBarFromValue(val){
-    // val in 1..5 => percentage (0..100)
-    const pct = ((val - 1) / 4) * 100; // 0..100
-    if (filled) filled.style.width = pct + '%';
-    // move knob if exists
-    if (knobWrapper) {
-      // knobWrapper parent left is centered at percent. We set transform via left
-      knobWrapper.style.left = pct + '%';
-      knobWrapper.style.transform = 'translateX(-50%)';
+    function toast(msg, time = 1500) {
+      const t = document.createElement('div');
+      t.textContent = msg;
+      Object.assign(t.style, {
+        position: 'fixed', right: '16px', bottom: '16px', zIndex: 99999,
+        background: '#13ec13', color: '#021', padding: '8px 12px', borderRadius: '8px',
+        boxShadow: '0 6px 18px rgba(0,0,0,0.25)', fontWeight: '600'
+      });
+      document.body.appendChild(t);
+      setTimeout(() => t.remove(), time);
     }
-    // Update textual label e.g. "Neutral"
-    const labelText = (val >=4) ? 'Positive' : (val === 3 ? 'Neutral' : 'Low');
-    // find the label showing "Neutral" near the bar (the right span)
-    const rightSpan = barContainer.closest('section')?.querySelector('span.font-semibold.text-primary');
-    if (rightSpan) rightSpan.textContent = labelText;
-  }
 
-  slider.addEventListener('input', (e) => {
-    updateBarFromValue(Number(slider.value));
-  });
+    // ----- Find elements (robust selectors for your HTML) -----
+    // Mood bar container: relative & h-2.5 classes in your markup
+    const bar = document.querySelector('div[class*="relative"][class*="h-2.5"]') ||
+                document.querySelector('div.relative.h-2.5') ||
+                document.querySelector('div.relative');
+    if (!bar) { log('Mood bar container not found. Aborting.'); return; }
 
-  // initialize UI from default slider value
-  updateBarFromValue(Number(slider.value));
+    // Filled portion (first absolute child that is full height)
+    let filled = Array.from(bar.children).find(c => /absolute/.test(c.className || '') && /h-full/.test(c.className || '')) || bar.querySelector('div[class*="bg-primary"]');
+    // Knob wrapper (the element placed above the bar)
+    let knobWrapper = Array.from(bar.children).find(c => /absolute/.test(c.className || '') && (c.style.transform || '').includes('translateX')) ||
+                      bar.querySelector('div[style*="transform"]') ||
+                      bar.querySelector('div.-top-2.5');
 
-  // ====== Save Mood implementation ======
-  function computeOverall(entries){
-    if (!entries.length) return {avg:3, percent:0};
-    const last7 = entries.slice(-7);
-    const avg = last7.reduce((s,e)=> s + (e.mood||3),0) / last7.length;
-    // percent change vs previous 7
-    const prev = entries.slice(-14, -7);
-    const prevAvg = (prev.length ? prev.reduce((s,e)=>s + (e.mood||3),0)/prev.length : avg);
-    const percent = prevAvg ? Math.round(((avg - prevAvg)/prevAvg) * 100) : 0;
-    return {avg, percent};
-  }
+    // Note textarea: choose the first textarea on the page (your note field)
+    const note = document.querySelector('textarea') || document.querySelector('textarea.form-input');
 
-  function renderSparkline(entries){
-    if (!chartSvg) return;
-    const last7 = entries.slice(-7);
-    if (last7.length === 0) {
-      // clear
-      const path = chartSvg.querySelector('path.stroke-path');
-      const area = chartSvg.querySelector('path.fill-area');
-      if (path) path.setAttribute('d','');
-      if (area) area.setAttribute('d','');
-      return;
-    }
-    // map moods 1..5 to y values in SVG viewBox height 150 (we want padding)
-    const viewW = 472;
-    const viewH = 150;
-    const leftPad = 0;
-    const rightPad = 0;
-    const pts = [];
-    last7.forEach((e,i)=> {
-      const x = leftPad + (i/(Math.max(1,last7.length-1))) * (viewW - leftPad - rightPad);
-      const value = e.mood;
-      const y = viewH - ((value - 1) / 4) * (viewH - 20) - 10; // invert and pad
-      pts.push({x,y});
+    // Save button: find button whose text contains 'Save Mood'
+    const saveBtn = byText('button', 'Save Mood') || Array.from(document.getElementsByTagName('button')).find(b => (b.innerText||'').trim().toLowerCase() === 'save mood');
+
+    // Overall label and percent: match the small known patterns in your markup
+    const overallValue = Array.from(document.querySelectorAll('p,div,span')).find(n => (n.className || '').includes('text-2xl') && (n.textContent||'').trim().length > 0) ||
+                         Array.from(document.querySelectorAll('p')).find(p => /Neutral|Positive|Low/i.test(p.textContent||''));
+    const percentEl = Array.from(document.querySelectorAll('p,div,span')).find(n => /\+?\-?\d+%/.test(n.textContent||'')) || null;
+
+    // Chart svg: your markup contains svg with viewBox "0 0 472 150"
+    const chartSvg = document.querySelector('svg[viewBox="0 0 472 150"]') || document.querySelector('svg');
+
+    // If some required items not found, log but continue where possible
+    if (!filled) log('Warning: filled bar element not found — bar update may not show visually.');
+    if (!knobWrapper) log('Warning: knob wrapper not found — knob movement may not show visually.');
+    if (!note) log('Warning: note textarea not found — notes will not be saved.');
+    if (!saveBtn) log('Warning: Save Mood button not found — automatic save disabled.');
+
+    // ----- create invisible range slider overlay -----
+    const slider = document.createElement('input');
+    slider.type = 'range';
+    slider.min = 1;
+    slider.max = 5;
+    slider.step = 1;
+    slider.value = 3; // neutral default
+    slider.setAttribute('aria-label', 'Select mood');
+    Object.assign(slider.style, {
+      position: 'absolute', left: '0', top: '0', width: '100%', height: '100%',
+      opacity: 0, zIndex: 10, cursor: 'pointer'
     });
-    // build path string (smooth using simple cubic bezier approx)
-    function buildPath(pts){
-      if (pts.length === 1) return `M ${pts[0].x} ${pts[0].y}`;
-      let d = `M ${pts[0].x} ${pts[0].y}`;
-      for (let i=1;i<pts.length;i++){
-        const prev = pts[i-1], cur = pts[i];
-        const cx = (prev.x + cur.x)/2;
-        d += ` Q ${cx} ${prev.y} ${cur.x} ${cur.y}`;
+    // ensure bar is positioned relative
+    if (window.getComputedStyle(bar).position === 'static') bar.style.position = 'relative';
+    bar.appendChild(slider);
+
+    // function: update the visual fill + knob + right label
+    function updateUIFromValue(v) {
+      const pct = ((v - 1) / 4) * 100;
+      if (filled) filled.style.width = pct + '%';
+      if (knobWrapper) {
+        knobWrapper.style.left = pct + '%';
+        knobWrapper.style.transform = 'translateX(-50%)';
       }
-      return d;
+      // update right label that originally shows "Neutral"
+      const rightLabel = bar.closest('section') && bar.closest('section').querySelector('span.font-semibold') || null;
+      if (rightLabel) {
+        const word = v >= 4 ? 'Positive' : (v === 3 ? 'Neutral' : 'Low');
+        rightLabel.textContent = word;
+      }
     }
-    const strokePath = buildPath(pts);
-    const areaPath = strokePath + ` L ${pts[pts.length-1].x} ${viewH} L ${pts[0].x} ${viewH} Z`;
-    // find or create paths
-    let strokeEl = chartSvg.querySelector('path.stroke-path');
-    let areaEl = chartSvg.querySelector('path.fill-area');
-    if (!strokeEl){
-      strokeEl = document.createElementNS('http://www.w3.org/2000/svg','path');
-      strokeEl.setAttribute('class','stroke-path');
-      strokeEl.setAttribute('fill','none');
-      strokeEl.setAttribute('stroke','#13ec13');
-      strokeEl.setAttribute('stroke-width','3');
-      strokeEl.setAttribute('stroke-linecap','round');
-      strokeEl.setAttribute('stroke-linejoin','round');
-      chartSvg.appendChild(strokeEl);
+
+    // initialize
+    updateUIFromValue(Number(slider.value));
+
+    // slider event
+    slider.addEventListener('input', (e) => updateUIFromValue(Number(e.target.value)));
+
+    // ----- storage helpers -----
+    function loadEntries() {
+      try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch (e) { return []; }
     }
-    if (!areaEl){
-      areaEl = document.createElementNS('http://www.w3.org/2000/svg','path');
-      areaEl.setAttribute('class','fill-area');
-      areaEl.setAttribute('fill','url(#chart-gradient)');
-      chartSvg.appendChild(areaEl);
+    function saveEntries(arr) {
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(arr)); } catch (e) { console.warn(e); }
     }
-    strokeEl.setAttribute('d', strokePath);
-    areaEl.setAttribute('d', areaPath);
-  }
 
-  function updateOverallUI(entries){
-    const {avg, percent} = computeOverall(entries);
-    if (overallValue) {
-      // round to words
-      const word = avg >= 4 ? 'Positive' : (avg >= 3 ? 'Neutral' : 'Low');
-      overallValue.textContent = word;
+    // local storage key (constant)
+    const STORAGE_KEY = 'mood_entries_v1';
+
+    // compute stats
+    function computeStats(entries) {
+      if (!entries.length) return { avg: 3, percent: 0 };
+      const last7 = entries.slice(-7);
+      const avg = (last7.reduce((s, e) => s + (e.mood || 3), 0) / last7.length);
+      const prev = entries.slice(-14, -7);
+      const prevAvg = prev.length ? (prev.reduce((s, e) => s + (e.mood || 3), 0) / prev.length) : avg;
+      const percent = prevAvg ? Math.round(((avg - prevAvg) / prevAvg) * 100) : 0;
+      return { avg, percent };
     }
-    if (percentEl){
-      percentEl.textContent = (percent >= 0 ? '+'+percent+'%' : percent+'%');
-      percentEl.classList.toggle('text-green-500', percent > 0);
-      percentEl.classList.toggle('text-red-400', percent < 0);
+
+    // render sparkline into the chartSvg (safe)
+    function renderSparkline(entries) {
+      if (!chartSvg) return;
+      // remove previously generated
+      Array.from(chartSvg.querySelectorAll('._generated')).forEach(n => n.remove());
+      const last7 = entries.slice(-7);
+      if (!last7.length) return;
+      const viewW = 472, viewH = 150;
+      const pts = last7.map((e, i) => {
+        const x = (i / (Math.max(1, last7.length - 1))) * viewW;
+        const y = viewH - ((e.mood - 1) / 4) * (viewH - 20) - 10;
+        return { x, y };
+      });
+      // build polyline path
+      let d = `M ${pts[0].x} ${pts[0].y}`;
+      for (let i = 1; i < pts.length; i++) d += ` L ${pts[i].x} ${pts[i].y}`;
+      const areaD = d + ` L ${pts[pts.length - 1].x} ${viewH} L ${pts[0].x} ${viewH} Z`;
+      const ns = 'http://www.w3.org/2000/svg';
+      const area = document.createElementNS(ns, 'path');
+      area.setAttribute('d', areaD);
+      area.setAttribute('fill', 'url(#chart-gradient)');
+      area.setAttribute('class', '_generated');
+      chartSvg.appendChild(area);
+      const stroke = document.createElementNS(ns, 'path');
+      stroke.setAttribute('d', d);
+      stroke.setAttribute('fill', 'none');
+      stroke.setAttribute('stroke', '#13ec13');
+      stroke.setAttribute('stroke-width', '3');
+      stroke.setAttribute('class', '_generated');
+      chartSvg.appendChild(stroke);
     }
-  }
 
-  // Save mood function
-  function saveMood(){
-    const mood = Number(slider.value) || 3;
-    const note = noteInput ? (noteInput.value || '') : '';
-    const entries = loadEntries();
-    const entry = { id: 'm-'+Date.now(), mood, note, createdAt: new Date().toISOString() };
-    entries.push(entry);
-    saveEntries(entries);
-    renderSparkline(entries);
-    updateOverallUI(entries);
-    toast('Mood saved');
-    // clear note after save
-    if (noteInput) noteInput.value = '';
-  }
+    // update overall UI
+    function updateOverallUI(entries) {
+      const { avg, percent } = computeStats(entries);
+      if (overallValue) {
+        const word = avg >= 4 ? 'Positive' : (avg >= 3 ? 'Neutral' : 'Low');
+        overallValue.textContent = word;
+      }
+      if (percentEl) {
+        percentEl.textContent = (percent >= 0 ? '+' + percent + '%' : percent + '%');
+        percentEl.classList.toggle('text-green-500', percent > 0);
+        percentEl.classList.toggle('text-red-400', percent < 0);
+      }
+    }
 
-  // Attach handler to Save button
-  if (saveBtn){
-    saveBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      saveMood();
-    });
-  } else {
-    console.warn('Save Mood button not found, user must click Save Mood to store entries.');
-  }
+    // Save mood action
+    function saveMood() {
+      const mood = Number(slider.value) || 3;
+      const noteText = note ? (note.value || '') : '';
+      const entries = loadEntries();
+      const newEntry = { id: 'm-' + Date.now(), mood, note: noteText, createdAt: new Date().toISOString() };
+      entries.push(newEntry);
+      saveEntries(entries);
+      renderSparkline(entries);
+      updateOverallUI(entries);
+      toast('Mood saved');
+      if (note) note.value = '';
+    }
 
-  // on load render existing data
-  document.addEventListener('DOMContentLoaded', () => {
-    const entries = loadEntries();
-    renderSparkline(entries);
-    updateOverallUI(entries);
-  });
-
-  // keyboard: pressing Enter while in textarea will not submit; use Ctrl+Enter to save
-  if (noteInput){
-    noteInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' && e.ctrlKey){
+    // attach save handler if button exists
+    if (saveBtn) {
+      saveBtn.addEventListener('click', function (e) {
         e.preventDefault();
+        saveMood();
+      });
+    } else {
+      log('Save button not found — mood saving disabled until a button with text "Save Mood" is present.');
+    }
+
+    // initial render from storage
+    const initialEntries = (function () {
+      try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch (e) { return []; }
+    })();
+    renderSparkline(initialEntries);
+    updateOverallUI(initialEntries);
+
+    // keyboard shortcut: Ctrl+Enter in textarea to save
+    if (note) note.addEventListener('keydown', function (ev) {
+      if (ev.key === 'Enter' && ev.ctrlKey) {
+        ev.preventDefault();
         saveMood();
       }
     });
-  }
 
-  // Expose for debugging
-  window.MoodTracker = {
-    loadEntries, saveEntries, saveMood, slider
-  };
+    // Expose for debugging
+    window._CampusCalmMood = {
+      saveMood, loadEntries: () => JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')
+    };
 
+    log('Mood tracker initialized.');
+  }); // ready
 })();
 </script>
-
 </body>
 </html>
