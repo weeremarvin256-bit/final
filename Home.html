@@ -172,7 +172,7 @@
 
   <button id="proBtn" class="flex-1 flex items-center justify-center gap-2 p-4 rounded-xl bg-primary/10 dark:bg-primary/20 text-primary">
     <span class="material-symbols-outlined">support_agent</span>
-    <span class="font-bold">Talk to a Pro</span>
+    <span class="font-bold">Talk to a Counselor</span>
   </button>
 </div>
 </div>
@@ -259,5 +259,109 @@
       <button id="proClose2" class="px-4 py-2 rounded-lg border">Close</button>
     </div>
   </div>
-</div>   
+</div>  
+<script>
+  (function(){
+    // Elements
+    const emergencyBtn = document.getElementById('emergencyBtn');
+    const proBtn = document.getElementById('proBtn');
+    const emergencyModal = document.getElementById('emergencyModal');
+    const proModal = document.getElementById('proModal');
+    const emergencyClose = document.getElementById('emergencyClose');
+    const emergencyClose2 = document.getElementById('emergencyClose2');
+    const proClose = document.getElementById('proClose');
+    const proClose2 = document.getElementById('proClose2');
+    const scheduleForm = document.getElementById('scheduleForm');
+    const scheduleResult = document.getElementById('scheduleResult');
+    const scheduleCancel = document.getElementById('scheduleCancel');
+    const chatBtn = document.getElementById('chatBtn');
+
+    function openModal(modal) {
+      if (!modal) return;
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      // focus first focusable element
+      const focusable = modal.querySelector('a, button, input, textarea, [tabindex]');
+      if (focusable) focusable.focus();
+    }
+    function closeModal(modal) {
+      if (!modal) return;
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    // Openers
+    if (emergencyBtn) emergencyBtn.addEventListener('click', ()=> openModal(emergencyModal));
+    if (proBtn) proBtn.addEventListener('click', ()=> openModal(proModal));
+
+    // Closers
+    [emergencyClose, emergencyClose2].forEach(btn => btn && btn.addEventListener('click', ()=> closeModal(emergencyModal)));
+    [proClose, proClose2].forEach(btn => btn && btn.addEventListener('click', ()=> closeModal(proModal)));
+
+    // Click outside to close
+    [emergencyModal, proModal].forEach(modal => {
+      if (!modal) return;
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal(modal);
+      });
+    });
+
+    // Escape key closes any open modal
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeModal(emergencyModal);
+        closeModal(proModal);
+      }
+    });
+
+    // Schedule form — demo: save to localStorage and show confirmation
+    if (scheduleForm) {
+      scheduleForm.addEventListener('submit', function(evt){
+        evt.preventDefault();
+        const form = new FormData(scheduleForm);
+        const contact = form.get('contact') || '';
+        const date = form.get('date') || '';
+        const entry = { contact, date, createdAt: new Date().toISOString() };
+
+        // Save demo schedule locally (no backend)
+        const existing = JSON.parse(localStorage.getItem('cc_schedules') || '[]');
+        existing.push(entry);
+        localStorage.setItem('cc_schedules', JSON.stringify(existing));
+
+        scheduleResult.classList.remove('hidden');
+        scheduleResult.textContent = 'Request saved. We will contact you on the provided number (demo).';
+        scheduleForm.reset();
+      });
+
+      scheduleCancel && scheduleCancel.addEventListener('click', () => {
+        scheduleForm.reset();
+        scheduleResult.classList.add('hidden');
+      });
+    }
+
+    // Chat button behavior: go to Chat.html if present otherwise alert
+    if (chatBtn) {
+      chatBtn.addEventListener('click', () => {
+        // Prefer an internal chat page if you have one
+        if (location.pathname.endsWith('Chat.html') || location.pathname.endsWith('chat.html')) {
+          // already on chat
+          alert('You are already on chat.');
+        } else {
+          // try to open Chat.html if it exists on your site
+          fetch('Chat.html', { method: 'HEAD' }).then(res => {
+            if (res.ok) location.href = 'Chat.html';
+            else alert('No internal chat page found — in production this could open an anonymous chat flow or WhatsApp.');
+          }).catch(()=> {
+            // network error or file missing
+            alert('No internal chat page found — in production this could open an anonymous chat flow or WhatsApp.');
+          });
+        }
+      });
+    }
+
+    // Optional: expose functions for console testing
+    window._CampusCalm = { openModal, closeModal };
+
+  })();
+</script>
 </body></html>
