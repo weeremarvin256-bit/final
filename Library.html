@@ -120,5 +120,319 @@
 </div>
 </nav>
 </div>
+<!-- BEGIN: Interactive library modal + script -->
+<!-- Modal (hidden by default) -->
+<div id="mh-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50 px-4" role="dialog" aria-modal="true" aria-labelledby="mh-modal-title">
+  <div class="bg-white dark:bg-slate-900 rounded-xl max-w-2xl w-full p-6 mx-auto shadow-lg">
+    <div class="flex items-start justify-between gap-4">
+      <div class="flex-1">
+        <h2 id="mh-modal-title" class="text-xl font-bold text-slate-900 dark:text-white"></h2>
+        <p id="mh-modal-sub" class="text-sm text-slate-600 dark:text-slate-300 mt-1"></p>
+      </div>
+      <button id="mh-modal-close" class="text-slate-500 dark:text-slate-300" aria-label="Close">✕</button>
+    </div>
+
+    <div class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div class="col-span-1">
+        <div id="mh-modal-image" class="w-full h-40 rounded-lg bg-center bg-cover"></div>
+        <div class="mt-3">
+          <button id="mh-save-fav" class="w-full px-3 py-2 rounded-lg bg-primary text-white">Save favorite</button>
+        </div>
+      </div>
+
+      <div class="col-span-2">
+        <div id="mh-modal-body" class="text-sm text-slate-700 dark:text-slate-200"></div>
+
+        <div id="mh-modal-tips" class="mt-3">
+          <h4 class="font-semibold text-slate-900 dark:text-white">Practical tips</h4>
+          <ul id="mh-modal-tips-list" class="list-disc ml-5 mt-2 text-sm text-slate-700 dark:text-slate-200"></ul>
+        </div>
+
+        <div id="mh-modal-resources" class="mt-4">
+          <h4 class="font-semibold text-slate-900 dark:text-white">Quick resources</h4>
+          <ul id="mh-modal-resources-list" class="mt-2 space-y-2 text-sm"></ul>
+        </div>
+
+        <div class="mt-4 flex gap-2">
+          <a id="mh-modal-more" href="#" target="_blank" rel="noopener" class="px-3 py-2 border rounded text-sm">Read more</a>
+          <button id="mh-modal-close-2" class="px-3 py-2 border rounded text-sm">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  // Defensive DOM helpers
+  const $ = (sel, ctx=document) => ctx.querySelector(sel);
+  const $$ = (sel, ctx=document) => Array.from(ctx.querySelectorAll(sel));
+
+  // --- Content DB: edit, extend, or replace these objects as needed ---
+  const CONTENT_DB = {
+    "Mindfulness": {
+      title: "Mindfulness",
+      image: "https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?q=80&w=800&auto=format&fit=crop&crop=faces",
+      subtitle: "Short practices to stay present",
+      body: "Mindfulness is the practice of paying attention to the present moment without judgement. Short daily exercises (5–10 minutes) help reduce rumination and improve concentration.",
+      tips: [
+        "Try a 5-minute breathing exercise: inhale 4s, hold 4s, exhale 6s.",
+        "Use the 5-4-3-2-1 grounding technique when anxious.",
+        "Set a daily reminder to check-in with your body and thoughts."
+      ],
+      resources: [
+        { label: "Simple guided audio (MP3)", url: "https://example.com/mindfulness-audio" },
+        { label: "Mindfulness exercises PDF", url: "https://example.com/mindfulness.pdf" }
+      ]
+    },
+    "Anxiety": {
+      title: "Anxiety",
+      image: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?q=80&w=800&auto=format&fit=crop&crop=faces",
+      subtitle: "Understanding and managing anxiety",
+      body: "Anxiety is a normal reaction to stress, but when intense or long-lasting it interferes with daily life. Learn grounding, breathing, and cognitive reframing techniques.",
+      tips: [
+        "Practice box breathing (4-4-4-4) for 2 minutes.",
+        "Break tasks into small steps to reduce overwhelm.",
+        "Limit caffeine when feeling anxious."
+      ],
+      resources: [
+        { label: "Anxiety self-help guide", url: "https://example.com/anxiety-guide" },
+        { label: "Local helpline (MUST Counselling)", tel: "+256414000000" }
+      ]
+    },
+    "Stress": {
+      title: "Stress",
+      image: "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?q=80&w=800&auto=format&fit=crop&crop=faces",
+      subtitle: "Practical ways to reduce stress",
+      body: "Stress is the body's response to pressure. Short-term stress is manageable, but chronic stress needs active self-care, time management and social support.",
+      tips: [
+        "Use Pomodoro (25/5) to structure study time.",
+        "Schedule short breaks and physical activity daily.",
+        "Talk to a friend or peer support group."
+      ],
+      resources: [
+        { label: "Stress reduction exercises", url: "https://example.com/stress" },
+        { label: "Emergency: Campus Security", tel: "+256414000000" }
+      ]
+    },
+    "Depression": {
+      title: "Depression",
+      image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=800&auto=format&fit=crop&crop=faces",
+      subtitle: "Signs, support & next steps",
+      body: "Depression affects mood, energy and interest. Recognizing symptoms early and seeking support are crucial. Counseling, peer support and routine can help.",
+      tips: [
+        "Keep a simple routine: regular sleep and meals.",
+        "Share small tasks with classmates or friends.",
+        "If thoughts of self-harm appear, seek urgent help."
+      ],
+      resources: [
+        { label: "Depression info (WHO)", url: "https://www.who.int/health-topics/depression" },
+        { label: "Local counselling centre", tel: "+256414000000" }
+      ]
+    },
+    "Meditation": {
+      title: "Meditation",
+      image: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=800&auto=format&fit=crop&crop=faces",
+      subtitle: "Guided meditations for students",
+      body: "Meditation trains attention and emotional regulation. Even short daily sessions (10–15 minutes) can improve mood and stress tolerance.",
+      tips: [
+        "Start with 5 minutes and gradually increase.",
+        "Use guided recordings to stay focused.",
+        "Try body-scan meditations before sleep."
+      ],
+      resources: [
+        { label: "Beginner guided meditation", url: "https://example.com/meditation" }
+      ]
+    },
+    "Overwhelm": {
+      title: "Overwhelm",
+      image: "https://images.unsplash.com/photo-1496317899792-9d7dbcd928a1?q=80&w=800&auto=format&fit=crop&crop=faces",
+      subtitle: "Dealing with feeling overwhelmed",
+      body: "When tasks pile up, it’s easy to feel overwhelmed. Prioritization, micro-tasks and asking for help are practical ways to regain control.",
+      tips: [
+        "Write a short list of 3 highest-priority tasks.",
+        "Delegate or ask peers for study groups.",
+        "Take a 10-minute walk to reset the mind."
+      ],
+      resources: [
+        { label: "Time management tips", url: "https://example.com/time" }
+      ]
+    }
+  };
+
+  // --- Utility functions ---
+  function openModal() {
+    const modal = document.getElementById('mh-modal');
+    if (!modal) return;
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
+    // trap focus (simple): focus close button
+    const closeBtn = document.getElementById('mh-modal-close');
+    if (closeBtn) closeBtn.focus();
+  }
+  function closeModal() {
+    const modal = document.getElementById('mh-modal');
+    if (!modal) return;
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
+  }
+  function setModalContent(obj) {
+    $('#mh-modal-title').textContent = obj.title || '';
+    $('#mh-modal-sub').textContent = obj.subtitle || '';
+    const img = $('#mh-modal-image');
+    if (img) img.style.backgroundImage = obj.image ? `url('${obj.image}')` : '';
+    $('#mh-modal-body').innerHTML = obj.body ? `<p>${escapeHtml(obj.body)}</p>` : '';
+    // tips
+    const tipsList = $('#mh-modal-tips-list');
+    tipsList.innerHTML = '';
+    (obj.tips || []).forEach(t => {
+      const li = document.createElement('li');
+      li.textContent = t;
+      tipsList.appendChild(li);
+    });
+    // resources
+    const resList = $('#mh-modal-resources-list');
+    resList.innerHTML = '';
+    (obj.resources || []).forEach(r => {
+      const li = document.createElement('li');
+      if (r.url) {
+        li.innerHTML = `<a class="text-primary dark:text-primary/80 underline" href="${escapeAttr(r.url)}" target="_blank" rel="noopener">${escapeHtml(r.label || r.url)}</a>`;
+      } else if (r.tel) {
+        li.innerHTML = `<a class="text-primary dark:text-primary/80 underline" href="tel:${escapeAttr(r.tel)}">${escapeHtml(r.label || r.tel)}</a>`;
+      } else {
+        li.textContent = r.label || '';
+      }
+      resList.appendChild(li);
+    });
+    // set 'Read more' link if present
+    const more = $('#mh-modal-more');
+    if (obj.resources && obj.resources.length && obj.resources[0].url) {
+      more.href = obj.resources[0].url;
+      more.classList.remove('opacity-40');
+    } else {
+      more.href = '#';
+      more.classList.add('opacity-40');
+    }
+  }
+
+  function escapeHtml(s='') { return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;'); }
+  function escapeAttr(s='') { return String(s).replaceAll('"','&quot;').replaceAll("'",'&#39;'); }
+
+  // Favorite storage helpers
+  const FAV_KEY = 'mh_favorites_v1';
+  function loadFavorites(){ try { return JSON.parse(localStorage.getItem(FAV_KEY) || '[]'); } catch { return []; } }
+  function saveFavorites(arr){ try { localStorage.setItem(FAV_KEY, JSON.stringify(arr)); } catch {} }
+
+  // --- Wire up modal buttons & behavior ---
+  document.addEventListener('click', function(e){
+    // close buttons
+    if (e.target.matches('#mh-modal-close') || e.target.matches('#mh-modal-close-2')) {
+      closeModal(); return;
+    }
+    // click outside modal content to close
+    const modalRoot = document.getElementById('mh-modal');
+    if (modalRoot && !modalRoot.classList.contains('hidden') && e.target === modalRoot) {
+      closeModal(); return;
+    }
+  });
+
+  // Escape to close
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'Escape') closeModal();
+  });
+
+  // Save favorite button
+  document.getElementById('mh-save-fav').addEventListener('click', function(){
+    const title = document.getElementById('mh-modal-title').textContent || 'Untitled';
+    const favs = loadFavorites();
+    if (!favs.includes(title)) {
+      favs.push(title);
+      saveFavorites(favs);
+      alert('Saved to favorites');
+    } else {
+      alert('Already in favorites');
+    }
+  });
+
+  // Close footer button also
+  document.getElementById('mh-modal-close-2').addEventListener('click', closeModal);
+
+  // --- Attach click handlers to category tiles ---
+  // Tiles are the anchors in your grid: select by the grid container then .querySelectorAll('a')
+  const grid = document.querySelector('main .grid');
+  if (!grid) {
+    console.warn('Library script: grid container not found.');
+    return;
+  }
+  const tiles = Array.from(grid.querySelectorAll('a'));
+
+  tiles.forEach(a => {
+    // read title from the h3 inside
+    const heading = a.querySelector('h3');
+    const key = heading ? heading.textContent.trim() : null;
+    // intercept click
+    a.addEventListener('click', function(evt){
+      evt.preventDefault();
+      if (!key) return;
+      // Try to find content; fallback to a default message
+      const content = CONTENT_DB[key] || {
+        title: key,
+        image: '',
+        subtitle: 'Content coming soon',
+        body: 'We are adding detailed resources for this topic. Check back later.',
+        tips: [],
+        resources: []
+      };
+      setModalContent(content);
+      openModal();
+    });
+    // add keyboard accessibility: Enter to open
+    a.addEventListener('keydown', (ev) => { if (ev.key === 'Enter') { ev.preventDefault(); a.click(); }});
+    // ensure anchor is focusable
+    a.setAttribute('tabindex', '0');
+    a.style.outlineOffset = '3px';
+  });
+
+  // --- Simple search filter (the search input at top of main) ---
+  const searchInput = document.querySelector('main input[type="text"]');
+  if (searchInput) {
+    searchInput.addEventListener('input', function(){
+      const q = (this.value || '').trim().toLowerCase();
+      tiles.forEach(a => {
+        const title = (a.querySelector('h3')?.textContent || '').toLowerCase();
+        const cat = (a.querySelector('h3')?.textContent || '').toLowerCase();
+        const show = !q || title.includes(q) || cat.includes(q);
+        a.style.display = show ? '' : 'none';
+      });
+    });
+  }
+
+  // --- Optional: mark favorites visually (adds small badge to tiles that are favorited) ---
+  function renderFavoriteBadges(){
+    const favs = loadFavorites();
+    tiles.forEach(a => {
+      const title = (a.querySelector('h3')?.textContent || '').trim();
+      // remove existing badge if any
+      const existing = a.querySelector('.fav-badge');
+      if (existing) existing.remove();
+      if (favs.includes(title)) {
+        const b = document.createElement('div');
+        b.className = 'fav-badge absolute -top-1 -right-1 bg-yellow-400 text-xs text-black px-2 py-0.5 rounded-full';
+        b.textContent = '★';
+        a.style.position = 'relative';
+        a.appendChild(b);
+      }
+    });
+  }
+  // run at startup
+  renderFavoriteBadges();
+
+  // Also update badges when modal save occurs (simple approach: hook save button)
+  document.getElementById('mh-save-fav').addEventListener('click', renderFavoriteBadges);
+
+  // --- End IIFE ---
+})();
+</script>
+<!-- END: Interactive library modal + script -->
 
 </body></html>
