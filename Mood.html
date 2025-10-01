@@ -7,362 +7,472 @@
 <link as="style" rel="stylesheet" onload="this.rel='stylesheet'" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Inter%3Awght%40400%3B500%3B700%3B900">
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <script>
-      tailwind.config = {
-        darkMode: "class",
-        theme: {
-          extend: {
-            colors: {
-              primary: "#13ec13",
-              "background-light": "#1a1a1a",
-              "background-dark": "#101010",
-              "surface-dark": "#1f1f1f",
-              "text-muted": "#888888",
-              "text-subtle": "#555555",
-            },
-            fontFamily: {
-              display: ["Inter"],
-            },
-            borderRadius: { DEFAULT: "0.5rem", lg: "1rem", xl: "1.5rem", full: "9999px" },
-          },
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          primary: "#13ec13",
+          "background-light": "#1a1a1a",
+          "background-dark": "#101010",
+          "surface-dark": "#1f1f1f",
+          "text-muted": "#888888",
+          "text-subtle": "#555555",
         },
-      };
-    </script>
-<title>YOUPER</title>
+        fontFamily: {
+          display: ["Inter"],
+        },
+        borderRadius: { DEFAULT: "0.5rem", lg: "1rem", xl: "1.5rem", full: "9999px" },
+      },
+    },
+  };
+</script>
+<title>YOUPER — Mood Tracker</title>
 <style>
-    body {
-      min-height: max(884px, 100dvh);
-    }
-    .scale-hover {
-      transition: transform 0.2s ease-in-out;
-    }
-    .scale-hover:hover {
-      transform: scale(1.03);
-    }
-    .interactive-element {
-        transition: background-color 0.2s ease-in-out, transform 0.2s ease-in-out;
-    }
-    .interactive-element:active {
-        transform: scale(0.98);
-    }
-  </style>
+  body { min-height: max(884px, 100dvh); }
+  .scale-hover { transition: transform 0.2s ease-in-out; }
+  .scale-hover:hover { transform: scale(1.03); }
+  .interactive-element { transition: background-color 0.2s ease-in-out, transform 0.2s ease-in-out; }
+  .interactive-element:active { transform: scale(0.98); }
+</style>
 </head>
-<body class="bg-background-dark font-display text-neutral-200 dark:text-neutral-200">
+<body class="bg-background-dark font-display text-neutral-200">
 <div class="flex h-full min-h-screen w-full flex-col">
-<header class="sticky top-0 z-10 bg-background-dark/80 px-4 py-3 backdrop-blur-sm">
-<div class="flex items-center">
-<button class="flex h-10 w-10 items-center justify-center rounded-full text-neutral-400 hover:bg-surface-dark interactive-element">
-<svg fill="currentColor" height="24" viewBox="0 0 256 256" width="24" xmlns="http://www.w3.org/2000/svg">
-<path d="M224,128a8,8,0,0,1-8,8H59.31l58.35,58.34a8,8,0,0,1-11.32,11.32l-72-72a8,8,0,0,1,0-11.32l72-72a8,8,0,0,1,11.32,11.32L59.31,120H216A8,8,0,0,1,224,128Z"></path>
-</svg>
-</button>
-<h1 class="flex-1 text-center text-lg font-bold text-neutral-100">Mood Tracker</h1>
-<div class="h-10 w-10"></div>
+  <header class="sticky top-0 z-10 bg-background-dark/80 px-4 py-3 backdrop-blur-sm">
+    <div class="flex items-center">
+      <button class="flex h-10 w-10 items-center justify-center rounded-full text-neutral-400 hover:bg-surface-dark interactive-element" aria-label="back">
+        <svg fill="currentColor" height="24" viewBox="0 0 256 256" width="24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M224,128a8,8,0,0,1-8,8H59.31l58.35,58.34a8,8,0,0,1-11.32,11.32l-72-72a8,8,0,0,1,0-11.32l72-72a8,8,0,0,1,11.32,11.32L59.31,120H216A8,8,0,0,1,224,128Z"></path>
+        </svg>
+      </button>
+      <h1 class="flex-1 text-center text-lg font-bold text-neutral-100">Mood Tracker</h1>
+      <div class="h-10 w-10"></div>
+    </div>
+  </header>
+
+  <main class="flex-1 px-4 py-6">
+    <div class="mx-auto max-w-md">
+
+      <!-- Intro -->
+      <section class="mb-8 text-center">
+        <h2 class="text-3xl font-bold text-neutral-100">How are you feeling today?</h2>
+        <p class="mt-2 text-text-muted">Your thoughts are safe here. Take a moment for yourself.</p>
+      </section>
+
+      <!-- Mood bar -->
+      <section class="mb-8 rounded-xl bg-surface-dark p-6 shadow-lg">
+        <div class="mb-4 flex items-center justify-between">
+          <span class="font-medium text-neutral-300">Mood</span>
+          <span id="moodLabel" class="font-semibold text-primary">Neutral</span>
+        </div>
+        <div id="moodBar" class="relative h-2.5 w-full rounded-full bg-neutral-700">
+          <div id="moodFill" class="absolute h-full w-1/2 rounded-full bg-primary"></div>
+          <div id="moodKnobWrapper" class="absolute -top-2.5" style="left:50%; transform: translateX(-50%)">
+            <div id="moodKnob" class="h-7 w-7 rounded-full border-4 border-primary bg-background-dark shadow-lg shadow-primary/30"></div>
+          </div>
+        </div>
+        <div class="mt-3 flex justify-between text-xs text-text-subtle">
+          <span>Low</span>
+          <span>High</span>
+        </div>
+      </section>
+
+      <!-- Note -->
+      <section class="mb-6">
+        <textarea id="noteInput" class="form-input min-h-[120px] w-full resize-none rounded-lg border-neutral-700 bg-surface-dark p-4 text-neutral-200 placeholder:text-text-subtle focus:border-primary focus:ring-primary" placeholder="Add a note about your day... (optional)"></textarea>
+      </section>
+
+      <!-- Save mood -->
+      <section class="text-center mb-8">
+        <button id="saveMoodBtn" class="w-full rounded-full bg-primary py-3 text-base font-bold text-black shadow-lg shadow-primary/30 interactive-element scale-hover">Save Mood</button>
+      </section>
+
+      <!-- ====== NEW: Daily 5-question mood quiz ====== -->
+      <section id="daily-quiz" class="mb-8 rounded-xl bg-surface-dark p-5 shadow-lg">
+        <div class="flex items-center justify-between mb-3">
+          <div>
+            <h3 class="text-lg font-bold text-neutral-100">Daily 5-Question Check</h3>
+            <p class="text-sm text-text-muted">Answer 5 quick statements to get a daily mood snapshot. Same questions for the whole day.</p>
+          </div>
+          <div id="quizDateLabel" class="text-sm text-text-subtle"></div>
+        </div>
+
+        <form id="quizForm" class="space-y-4">
+          <div id="questionsList" class="space-y-3"></div>
+
+          <div class="flex items-center gap-3">
+            <button id="submitQuizBtn" class="px-4 py-2 bg-primary text-black rounded-lg">Submit Quiz</button>
+            <button id="skipQuizBtn" type="button" class="px-4 py-2 border rounded-lg">Skip</button>
+            <div id="quizStatus" class="text-sm text-text-subtle"></div>
+          </div>
+        </form>
+
+        <!-- result -->
+        <div id="quizResult" class="mt-4 hidden border-t pt-4">
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="text-sm text-text-muted">Today's quiz</div>
+              <div id="quizMoodLabel" class="text-2xl font-bold text-neutral-100">—</div>
+              <div id="quizScoreLabel" class="text-sm text-text-subtle"></div>
+            </div>
+            <div>
+              <button id="retakeQuizBtn" class="px-3 py-2 border rounded-lg">Retake</button>
+            </div>
+          </div>
+
+          <div id="quizNoteArea" class="mt-3">
+            <label class="text-sm text-neutral-200">Add a note (optional)</label>
+            <textarea id="quizNote" rows="3" class="w-full mt-2 p-2 border rounded bg-background-dark text-neutral-200" placeholder="How are you feeling?"></textarea>
+            <div class="mt-2 flex gap-2">
+              <button id="saveQuizNoteBtn" class="px-4 py-2 bg-primary text-black rounded-lg">Save Note</button>
+              <button id="clearQuizNoteBtn" class="px-4 py-2 border rounded-lg">Clear</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- past -->
+        <div id="pastResults" class="mt-6">
+          <h4 class="text-sm font-semibold text-neutral-200 mb-2">Past quizzes (last 14 days)</h4>
+          <div id="pastList" class="space-y-2 text-sm text-text-muted"></div>
+        </div>
+      </section>
+      <!-- ===== end daily quiz ===== -->
+
+      <!-- Trends -->
+      <section class="mt-12">
+        <h2 class="mb-4 text-xl font-bold text-neutral-100">Your Mood Trends</h2>
+        <div class="rounded-xl border border-neutral-700 bg-surface-dark p-4">
+          <div class="flex items-start justify-between">
+            <div>
+              <p class="text-sm text-text-muted">Overall Mood</p>
+              <p id="overallMoodValue" class="text-2xl font-bold text-neutral-100">Neutral</p>
+            </div>
+            <div class="text-right">
+              <p class="text-sm text-text-muted">Last 7 Days</p>
+              <p id="percentChange" class="font-semibold text-green-500">+5%</p>
+            </div>
+          </div>
+          <div class="mt-6 h-40">
+            <svg id="trendSvg" fill="none" height="100%" preserveAspectRatio="none" viewBox="0 0 472 150" width="100%" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <linearGradient gradientUnits="userSpaceOnUse" id="chart-gradient" x1="0" x2="0" y1="0" y2="150">
+                  <stop stop-color="#13ec13" stop-opacity="0.3"></stop>
+                  <stop offset="1" stop-color="#13ec13" stop-opacity="0"></stop>
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
+          <div class="mt-4 flex justify-around border-t border-neutral-700 pt-2 text-xs">
+            <p class="font-bold text-text-subtle">Mon</p>
+            <p class="font-bold text-text-subtle">Tue</p>
+            <p class="font-bold text-text-subtle">Wed</p>
+            <p class="font-bold text-text-subtle">Thu</p>
+            <p class="font-bold text-primary">Fri</p>
+            <p class="font-bold text-text-subtle">Sat</p>
+            <p class="font-bold text-text-subtle">Sun</p>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <footer class="sticky bottom-0 border-t border-neutral-700 bg-background-dark/80 pb-4 pt-2 backdrop-blur-sm">
+    <nav class="flex justify-around">
+      <a class="flex flex-col items-center gap-1 text-text-muted hover:text-neutral-200" href="Home.html">
+        <svg fill="currentColor" height="24" viewBox="0 0 256 256" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M218.83,103.77l-80-75.48a1.14,1.14,0,0,1-.11-.11,16,16,0,0,0-21.53,0l-.11.11L37.17,103.77A16,16,0,0,0,32,115.55V208a16,16,0,0,0,16,16H96a16,16,0,0,0,16-16V160h32v48a16,16,0,0,0,16,16h48a16,16,0,0,0,16-16V115.55A16,16,0,0,0,218.83,103.77ZM208,208H160V160a16,16,0,0,0-16-16H112a16,16,0,0,0-16,16v48H48V115.55l.11-.1L128,40l79.9,75.43.11.1Z"></path></svg>
+        <span class="text-xs font-medium">Home</span>
+      </a>
+      <a class="flex flex-col items-center gap-1 text-text-muted hover:text-neutral-200" href="Library.html">
+        <svg fill="currentColor" height="24" viewBox="0 0 256 256" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M184,32H72A16,16,0,0,0,56,48V224a8,8,0,0,0,12.24,6.78L128,193.43l59.77,37.35A8,8,0,0,0,200,224V48A16,16,0,0,0,184,32Zm0,16V161.57l-51.77-32.35a8,8,0,0,0-8.48,0L72,161.56V48ZM132.23,177.22a8,8,0,0,0-8.48,0L72,209.57V180.43l56-35,56,35v29.14Z"></path></svg>
+        <span class="text-xs font-medium">Library</span>
+      </a>
+      <a class="flex flex-col items-center gap-1 text-text-muted hover:text-neutral-200" href="Communitynew.html">
+        <svg fill="currentColor" height="24" viewBox="0 0 256 256" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M117.25,157.92a60,60,0,1,0-66.5,0A95.83,95.83,0,0,0,3.53,195.63a8,8,0,1,0,13.4,8.74,80,80,0,0,1,134.14,0,8,8,0,0,0,13.4-8.74A95.83,95.83,0,0,0,117.25,157.92ZM40,108a44,44,0,1,1,44,44A44.05,44.05,0,0,1,40,108Zm210.14,98.7a8,8,0,0,1-11.07-2.33A79.83,79.83,0,0,0,172,168a8,8,0,0,1,0-16,44,44,0,1,0-16.34-84.87,8,8,0,1,1-5.94-14.85,60,60,0,0,1,55.53,105.64,95.83,95.83,0,0,1,47.22,37.71A8,8,0,0,1,250.14,206.7Z"></path></svg>
+        <span class="text-xs font-medium">Community</span>
+      </a>
+      <a class="flex flex-col items-center gap-1 text-primary" href="Mood.html">
+        <svg fill="currentColor" height="24" viewBox="0 0 256 256" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24ZM92,96a12,12,0,1,1-12,12A12,12,0,0,1,92,96Zm82.92,60c-10.29,17.79-27.39,28-46.92,28s-36.63-10.2-46.92-28a8,8,0,1,1,13.84-8c7.47,12.91,19.21,20,33.08,20s25.61-7.1,33.08-20a8,8,0,1,1,13.84,8ZM164,120a12,12,0,1,1,12-12A12,12,0,0,1,164,120Z"></path></svg>
+        <span class="text-xs font-bold">Mood</span>
+      </a>
+    </nav>
+  </footer>
 </div>
-</header>
-<main class="flex-1 px-4 py-6">
-<div class="mx-auto max-w-md">
-<section class="mb-8 text-center">
-<h2 class="text-3xl font-bold text-neutral-100">How are you feeling today?</h2>
-<p class="mt-2 text-text-muted">Your thoughts are safe here. Take a moment for yourself.</p>
-</section>
-<section class="mb-8 rounded-xl bg-surface-dark p-6 shadow-lg">
-<div class="mb-4 flex items-center justify-between">
-<span class="font-medium text-neutral-300">Mood</span>
-<span class="font-semibold text-primary">Neutral</span>
-</div>
-<div class="relative h-2.5 w-full rounded-full bg-neutral-700">
-<div class="absolute h-full w-1/2 rounded-full bg-primary"></div>
-<div class="absolute -top-2.5" style="left: 50%; transform: translateX(-50%)">
-<div class="h-7 w-7 rounded-full border-4 border-primary bg-background-dark shadow-lg shadow-primary/30"></div>
-</div>
-</div>
-<div class="mt-3 flex justify-between text-xs text-text-subtle">
-<span>Low</span>
-<span>High</span>
-</div>
-</section>
-<section class="mb-8">
-<textarea class="form-input min-h-[120px] w-full resize-none rounded-lg border-neutral-700 bg-surface-dark p-4 text-neutral-200 placeholder:text-text-subtle focus:border-primary focus:ring-primary" placeholder="Add a note about your day... (optional)"></textarea>
-</section>
-<section class="text-center">
-<button class="w-full rounded-full bg-primary py-3 text-base font-bold text-black shadow-lg shadow-primary/30 interactive-element scale-hover">Save Mood</button>
-</section>
-<section class="mt-12">
-<h2 class="mb-4 text-xl font-bold text-neutral-100">Your Mood Trends</h2>
-<div class="rounded-xl border border-neutral-700 bg-surface-dark p-4">
-<div class="flex items-start justify-between">
-<div>
-<p class="text-sm text-text-muted">Overall Mood</p>
-<p class="text-2xl font-bold text-neutral-100">Neutral</p>
-</div>
-<div class="text-right">
-<p class="text-sm text-text-muted">Last 7 Days</p>
-<p class="font-semibold text-green-500">+5%</p>
-</div>
-</div>
-<div class="mt-6 h-40">
-<svg fill="none" height="100%" preserveAspectRatio="none" viewBox="0 0 472 150" width="100%" xmlns="http://www.w3.org/2000/svg">
-<defs>
-<linearGradient gradientUnits="userSpaceOnUse" id="chart-gradient" x1="0" x2="0" y1="0" y2="150">
-<stop stop-color="#13ec13" stop-opacity="0.3"></stop>
-<stop offset="1" stop-color="#13ec13" stop-opacity="0"></stop>
-</linearGradient>
-</defs>
-<path d="M0 109C18.1538 109 18.1538 21 36.3077 21C54.4615 21 54.4615 41 72.6154 41C90.7692 41 90.7692 93 108.923 93C127.077 93 127.077 33 145.231 33C163.385 33 163.385 101 181.538 101C199.692 101 199.692 61 217.846 61C236 61 236 45 254.154 45C272.308 45 272.308 121 290.462 121C308.615 121 308.615 149 326.769 149C344.923 149 344.923 1 363.077 1C381.231 1 381.231 81 399.385 81C417.538 81 417.538 129 435.692 129C453.846 129 453.846 25 472 25" stroke="#13ec13" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"></path>
-<path d="M0 109C18.1538 109 18.1538 21 36.3077 21C54.4615 21 54.4615 41 72.6154 41C90.7692 41 90.7692 93 108.923 93C127.077 93 127.077 33 145.231 33C163.385 33 163.385 101 181.538 101C199.692 101 199.692 61 217.846 61C236 61 236 45 254.154 45C272.308 45 272.308 121 290.462 121C308.615 121 308.615 149 326.769 149C344.923 149 344.923 1 363.077 1C381.231 1 381.231 81 399.385 81C417.538 81 417.538 129 435.692 129C453.846 129 453.846 25 472 25V150H0V109Z" fill="url(#chart-gradient)"></path>
-</svg>
-</div>
-<div class="mt-4 flex justify-around border-t border-neutral-700 pt-2">
-<p class="text-xs font-bold text-text-subtle">Mon</p>
-<p class="text-xs font-bold text-text-subtle">Tue</p>
-<p class="text-xs font-bold text-text-subtle">Wed</p>
-<p class="text-xs font-bold text-text-subtle">Thu</p>
-<p class="text-xs font-bold text-primary">Fri</p>
-<p class="text-xs font-bold text-text-subtle">Sat</p>
-<p class="text-xs font-bold text-text-subtle">Sun</p>
-</div>
-</div>
-</section>
-</div>
-</main>
-<footer class="sticky bottom-0 border-t border-neutral-700 bg-background-dark/80 pb-4 pt-2 backdrop-blur-sm">
-<nav class="flex justify-around">
-<a class="flex flex-col items-center gap-1 text-text-muted hover:text-neutral-200" href="Home.html">
-<svg fill="currentColor" height="24" viewBox="0 0 256 256" width="24" xmlns="http://www.w3.org/2000/svg">
-<path d="M218.83,103.77l-80-75.48a1.14,1.14,0,0,1-.11-.11,16,16,0,0,0-21.53,0l-.11.11L37.17,103.77A16,16,0,0,0,32,115.55V208a16,16,0,0,0,16,16H96a16,16,0,0,0,16-16V160h32v48a16,16,0,0,0,16,16h48a16,16,0,0,0,16-16V115.55A16,16,0,0,0,218.83,103.77ZM208,208H160V160a16,16,0,0,0-16-16H112a16,16,0,0,0-16,16v48H48V115.55l.11-.1L128,40l79.9,75.43.11.1Z"></path>
-</svg>
-<span class="text-xs font-medium">Home</span>
-</a>
-<a class="flex flex-col items-center gap-1 text-text-muted hover:text-neutral-200" href="Library.html">
-<svg fill="currentColor" height="24" viewBox="0 0 256 256" width="24" xmlns="http://www.w3.org/2000/svg">
-<path d="M184,32H72A16,16,0,0,0,56,48V224a8,8,0,0,0,12.24,6.78L128,193.43l59.77,37.35A8,8,0,0,0,200,224V48A16,16,0,0,0,184,32Zm0,16V161.57l-51.77-32.35a8,8,0,0,0-8.48,0L72,161.56V48ZM132.23,177.22a8,8,0,0,0-8.48,0L72,209.57V180.43l56-35,56,35v29.14Z"></path>
-</svg>
-<span class="text-xs font-medium">Library</span>
-</a>
-<a class="flex flex-col items-center gap-1 text-text-muted hover:text-neutral-200" href="Communitynew.html">
-<svg fill="currentColor" height="24" viewBox="0 0 256 256" width="24" xmlns="http://www.w3.org/2000/svg">
-<path d="M117.25,157.92a60,60,0,1,0-66.5,0A95.83,95.83,0,0,0,3.53,195.63a8,8,0,1,0,13.4,8.74,80,80,0,0,1,134.14,0,8,8,0,0,0,13.4-8.74A95.83,95.83,0,0,0,117.25,157.92ZM40,108a44,44,0,1,1,44,44A44.05,44.05,0,0,1,40,108Zm210.14,98.7a8,8,0,0,1-11.07-2.33A79.83,79.83,0,0,0,172,168a8,8,0,0,1,0-16,44,44,0,1,0-16.34-84.87,8,8,0,1,1-5.94-14.85,60,60,0,0,1,55.53,105.64,95.83,95.83,0,0,1,47.22,37.71A8,8,0,0,1,250.14,206.7Z"></path>
-</svg>
-<span class="text-xs font-medium">Community</span>
-</a>
-<a class="flex flex-col items-center gap-1 text-primary" href="Mood.html">
-<svg fill="currentColor" height="24" viewBox="0 0 256 256" width="24" xmlns="http://www.w3.org/2000/svg">
-<path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24ZM92,96a12,12,0,1,1-12,12A12,12,0,0,1,92,96Zm82.92,60c-10.29,17.79-27.39,28-46.92,28s-36.63-10.2-46.92-28a8,8,0,1,1,13.84-8c7.47,12.91,19.21,20,33.08,20s25.61-7.1,33.08-20a8,8,0,1,1,13.84,8ZM164,120a12,12,0,1,1,12-12A12,12,0,0,1,164,120Z"></path>
-</svg>
-<span class="text-xs font-bold">Mood</span>
-</a>
-</nav>
-</footer>
-</div>
+
+<!-- ===== Script: mood slider + daily quiz + persistence ===== -->
 <script>
-(function () {
-  // Safe start: wait until DOM is available
-  function ready(fn) { if (document.readyState !== 'loading') fn(); else document.addEventListener('DOMContentLoaded', fn); }
+(function(){
+  // ---- Mood slider overlay (1..5) and UI sync ----
+  const bar = document.getElementById('moodBar');
+  const fill = document.getElementById('moodFill');
+  const knobWrapper = document.getElementById('moodKnobWrapper');
+  const moodLabel = document.getElementById('moodLabel');
+  const noteInput = document.getElementById('noteInput');
+  const saveMoodBtn = document.getElementById('saveMoodBtn');
 
-  ready(function () {
-    // ----- Helpers -----
-    const log = (...a) => console.log('[MoodTracker]', ...a);
-    const STORAGE_KEY = 'mood_entries_v1';
-    const byText = (tag, text) => Array.from(document.getElementsByTagName(tag || 'button')).find(el => (el.textContent || '').trim().toLowerCase().includes((text||'').toLowerCase()));
+  // create invisible range overlay
+  const slider = document.createElement('input');
+  slider.type = 'range'; slider.min = 1; slider.max = 5; slider.step = 1; slider.value = 3;
+  Object.assign(slider.style, { position:'absolute', left:0, top:0, width:'100%', height:'100%', opacity:0, zIndex:5, cursor:'pointer' });
+  if (getComputedStyle(bar).position === 'static') bar.style.position = 'relative';
+  bar.appendChild(slider);
 
-    function toast(msg, time = 1500) {
-      const t = document.createElement('div');
-      t.textContent = msg;
-      Object.assign(t.style, {
-        position: 'fixed', right: '16px', bottom: '16px', zIndex: 99999,
-        background: '#13ec13', color: '#021', padding: '8px 12px', borderRadius: '8px',
-        boxShadow: '0 6px 18px rgba(0,0,0,0.25)', fontWeight: '600'
-      });
-      document.body.appendChild(t);
-      setTimeout(() => t.remove(), time);
-    }
+  function setUIFromValue(v){
+    const pct = ((v - 1) / 4) * 100;
+    if (fill) fill.style.width = pct + '%';
+    if (knobWrapper) { knobWrapper.style.left = pct + '%'; knobWrapper.style.transform = 'translateX(-50%)'; }
+    if (moodLabel) moodLabel.textContent = v >= 4 ? 'Positive' : (v == 3 ? 'Neutral' : 'Low');
+  }
+  slider.addEventListener('input', e => setUIFromValue(Number(e.target.value)));
+  setUIFromValue(Number(slider.value));
 
-    // ----- Find elements (robust selectors for your HTML) -----
-    // Mood bar container: relative & h-2.5 classes in your markup
-    const bar = document.querySelector('div[class*="relative"][class*="h-2.5"]') ||
-                document.querySelector('div.relative.h-2.5') ||
-                document.querySelector('div.relative');
-    if (!bar) { log('Mood bar container not found. Aborting.'); return; }
+  // Save mood to localStorage (simple model)
+  const MOOD_KEY = 'mood_entries_v1';
+  function loadMoodEntries(){ try { return JSON.parse(localStorage.getItem(MOOD_KEY)||'[]'); } catch { return []; } }
+  function saveMoodEntry(entry){
+    const arr = loadMoodEntries(); arr.push(entry); localStorage.setItem(MOOD_KEY, JSON.stringify(arr));
+    renderTrend(); // re-render
+  }
+  saveMoodBtn.addEventListener('click', () => {
+    const entry = { id: 'm-'+Date.now(), mood: Number(slider.value)||3, note: (noteInput.value||''), createdAt: new Date().toISOString() };
+    saveMoodEntry(entry);
+    alert('Mood saved (demo).');
+    noteInput.value = '';
+  });
 
-    // Filled portion (first absolute child that is full height)
-    let filled = Array.from(bar.children).find(c => /absolute/.test(c.className || '') && /h-full/.test(c.className || '')) || bar.querySelector('div[class*="bg-primary"]');
-    // Knob wrapper (the element placed above the bar)
-    let knobWrapper = Array.from(bar.children).find(c => /absolute/.test(c.className || '') && (c.style.transform || '').includes('translateX')) ||
-                      bar.querySelector('div[style*="transform"]') ||
-                      bar.querySelector('div.-top-2.5');
+  // ---- Trend rendering (simple sparkline) ----
+  const trendSvg = document.getElementById('trendSvg');
+  const overallMoodValue = document.getElementById('overallMoodValue');
+  const percentChangeEl = document.getElementById('percentChange');
 
-    // Note textarea: choose the first textarea on the page (your note field)
-    const note = document.querySelector('textarea') || document.querySelector('textarea.form-input');
+  function computeStats(entries){
+    if (!entries.length) return { avg:3, percent:0 };
+    const last7 = entries.slice(-7);
+    const avg = last7.reduce((s,e)=>s+(e.mood||3),0)/last7.length;
+    const prev = entries.slice(-14,-7);
+    const prevAvg = prev.length ? prev.reduce((s,e)=>s+(e.mood||3),0)/prev.length : avg;
+    const percent = prevAvg ? Math.round(((avg - prevAvg)/prevAvg)*100) : 0;
+    return { avg, percent };
+  }
 
-    // Save button: find button whose text contains 'Save Mood'
-    const saveBtn = byText('button', 'Save Mood') || Array.from(document.getElementsByTagName('button')).find(b => (b.innerText||'').trim().toLowerCase() === 'save mood');
-
-    // Overall label and percent: match the small known patterns in your markup
-    const overallValue = Array.from(document.querySelectorAll('p,div,span')).find(n => (n.className || '').includes('text-2xl') && (n.textContent||'').trim().length > 0) ||
-                         Array.from(document.querySelectorAll('p')).find(p => /Neutral|Positive|Low/i.test(p.textContent||''));
-    const percentEl = Array.from(document.querySelectorAll('p,div,span')).find(n => /\+?\-?\d+%/.test(n.textContent||'')) || null;
-
-    // Chart svg: your markup contains svg with viewBox "0 0 472 150"
-    const chartSvg = document.querySelector('svg[viewBox="0 0 472 150"]') || document.querySelector('svg');
-
-    // If some required items not found, log but continue where possible
-    if (!filled) log('Warning: filled bar element not found — bar update may not show visually.');
-    if (!knobWrapper) log('Warning: knob wrapper not found — knob movement may not show visually.');
-    if (!note) log('Warning: note textarea not found — notes will not be saved.');
-    if (!saveBtn) log('Warning: Save Mood button not found — automatic save disabled.');
-
-    // ----- create invisible range slider overlay -----
-    const slider = document.createElement('input');
-    slider.type = 'range';
-    slider.min = 1;
-    slider.max = 5;
-    slider.step = 1;
-    slider.value = 3; // neutral default
-    slider.setAttribute('aria-label', 'Select mood');
-    Object.assign(slider.style, {
-      position: 'absolute', left: '0', top: '0', width: '100%', height: '100%',
-      opacity: 0, zIndex: 10, cursor: 'pointer'
+  function renderTrend(){
+    if (!trendSvg) return;
+    // remove generated
+    Array.from(trendSvg.querySelectorAll('.gen')).forEach(n=>n.remove());
+    const entries = loadMoodEntries();
+    const last7 = entries.slice(-7);
+    if (!last7.length) return;
+    const viewW = 472, viewH = 150;
+    const pts = last7.map((e,i)=> {
+      const x = (i/(Math.max(1,last7.length-1)))*viewW;
+      const y = viewH - ((e.mood - 1)/4)*(viewH-20) - 10;
+      return {x,y};
     });
-    // ensure bar is positioned relative
-    if (window.getComputedStyle(bar).position === 'static') bar.style.position = 'relative';
-    bar.appendChild(slider);
+    let d = `M ${pts[0].x} ${pts[0].y}`;
+    for (let i=1;i<pts.length;i++) d += ` L ${pts[i].x} ${pts[i].y}`;
+    const area = d + ` L ${pts[pts.length-1].x} ${viewH} L ${pts[0].x} ${viewH} Z`;
+    const ns = 'http://www.w3.org/2000/svg';
+    const areaEl = document.createElementNS(ns,'path'); areaEl.setAttribute('d',area); areaEl.setAttribute('fill','url(#chart-gradient)'); areaEl.classList.add('gen');
+    const strokeEl = document.createElementNS(ns,'path'); strokeEl.setAttribute('d',d); strokeEl.setAttribute('fill','none'); strokeEl.setAttribute('stroke','#13ec13'); strokeEl.setAttribute('stroke-width','3'); strokeEl.classList.add('gen');
+    trendSvg.appendChild(areaEl); trendSvg.appendChild(strokeEl);
 
-    // function: update the visual fill + knob + right label
-    function updateUIFromValue(v) {
-      const pct = ((v - 1) / 4) * 100;
-      if (filled) filled.style.width = pct + '%';
-      if (knobWrapper) {
-        knobWrapper.style.left = pct + '%';
-        knobWrapper.style.transform = 'translateX(-50%)';
+    // update overall
+    const stats = computeStats(entries);
+    if (overallMoodValue) overallMoodValue.textContent = stats.avg >=4 ? 'Positive' : (stats.avg >=3 ? 'Neutral' : 'Low');
+    if (percentChangeEl) { percentChangeEl.textContent = (stats.percent>=0? '+'+stats.percent+'%': stats.percent+'%'); percentChangeEl.classList.toggle('text-green-500', stats.percent>0); percentChangeEl.classList.toggle('text-red-400', stats.percent<0); }
+  }
+
+  // render on load
+  document.addEventListener('DOMContentLoaded', renderTrend);
+
+  // ---- Daily quiz implementation ----
+  const QUESTION_BANK = [
+    "I felt calm and relaxed today.",
+    "I was able to concentrate on tasks without much distraction.",
+    "I felt hopeful about my future.",
+    "I managed my worries effectively today.",
+    "I felt connected to others (friends/family) today.",
+    "I felt overwhelmed by tasks or responsibilities.",
+    "I experienced physical symptoms of stress (e.g., tense muscles).",
+    "I slept well last night.",
+    "I felt motivated to study or work today.",
+    "I found time to relax or do something I enjoy."
+  ];
+
+  // deterministic shuffle based on date
+  function hashStr(s){ let h = 2166136261 >>>0; for (let i=0;i<s.length;i++){ h = Math.imul(h ^ s.charCodeAt(i), 16777619) >>>0; } return h; }
+  function mulberry32(a){ return function(){ var t = a += 0x6D2B79F5; t = Math.imul(t ^ t>>>15, t | 1); t ^= t + Math.imul(t ^ t>>>7, t | 61); return ((t ^ t>>>14) >>>0) / 4294967296; } }
+  function seededShuffle(arr, seed){ const out = arr.slice(); let rnd = mulberry32(hashStr(seed)); for (let i=out.length-1;i>0;i--){ const j = Math.floor(rnd()*(i+1)); [out[i], out[j]] = [out[j], out[i]]; } return out; }
+
+  function todayKey(){ return (new Date()).toISOString().slice(0,10); }
+  function storageKeyForDate(d){ return 'daily_quiz_' + d; }
+
+  const quizDateLabel = document.getElementById('quizDateLabel');
+  const questionsList = document.getElementById('questionsList');
+  const quizForm = document.getElementById('quizForm');
+  const quizResult = document.getElementById('quizResult');
+  const quizMoodLabel = document.getElementById('quizMoodLabel');
+  const quizScoreLabel = document.getElementById('quizScoreLabel');
+  const quizNote = document.getElementById('quizNote');
+  const saveQuizNoteBtn = document.getElementById('saveQuizNoteBtn');
+  const clearQuizNoteBtn = document.getElementById('clearQuizNoteBtn');
+  const pastList = document.getElementById('pastList');
+  const submitQuizBtn = document.getElementById('submitQuizBtn');
+  const skipQuizBtn = document.getElementById('skipQuizBtn');
+  const retakeQuizBtn = document.getElementById('retakeQuizBtn');
+
+  const today = todayKey();
+  if (quizDateLabel) quizDateLabel.textContent = new Date().toLocaleDateString();
+
+  const todaysQuestions = seededShuffle(QUESTION_BANK, today).slice(0,5);
+
+  function escapeHtml(s=''){ return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;'); }
+
+  function renderQuestions(){
+    questionsList.innerHTML = '';
+    todaysQuestions.forEach((q, idx) => {
+      const id = 'q-' + idx;
+      const wrapper = document.createElement('div');
+      wrapper.className = 'space-y-1';
+      wrapper.innerHTML = `
+        <div class="text-sm font-medium text-neutral-200">${escapeHtml(q)}</div>
+        <div class="flex items-center gap-2 text-xs text-text-muted">
+          ${[0,1,2,3,4].map(v => `
+            <label class="flex items-center gap-2">
+              <input name="${id}" type="radio" value="${v}" class="form-radio" ${v===2?'checked':''} />
+              <span class="w-6 text-center">${v}</span>
+            </label>`).join('')}
+          <div class="ml-3 text-xs text-text-muted">0=Never · 4=Always</div>
+        </div>
+      `;
+      questionsList.appendChild(wrapper);
+    });
+  }
+
+  function computeScore(answers){
+    const sum = answers.reduce((s,a)=>s + (Number(a)||0),0);
+    const avg = sum / answers.length;
+    const moodValue = Math.round((avg / 4) * 4) + 1;
+    let moodLabel = 'Neutral';
+    if (avg >= 3.25) moodLabel = 'Positive';
+    else if (avg >= 1.75) moodLabel = 'Neutral';
+    else moodLabel = 'Low';
+    return { sum, avg, moodValue, moodLabel };
+  }
+
+  function saveResult(dateStr, payload){
+    try { localStorage.setItem(storageKeyForDate(dateStr), JSON.stringify(payload)); } catch(e){ console.warn(e); }
+  }
+  function loadResult(dateStr){
+    try { const raw = localStorage.getItem(storageKeyForDate(dateStr)); return raw ? JSON.parse(raw) : null; } catch { return null; }
+  }
+
+  function renderPast(){
+    pastList.innerHTML = '';
+    for (let i=0;i<14;i++){
+      const d = new Date(); d.setDate(d.getDate() - i);
+      const key = d.toISOString().slice(0,10);
+      const res = loadResult(key);
+      const el = document.createElement('div'); el.className = 'flex items-center justify-between p-2 rounded';
+      if (res){
+        el.innerHTML = `<div class="text-sm">${new Date(key).toLocaleDateString()}</div><div class="text-sm font-semibold">${escapeHtml(res.moodLabel)} (${Math.round(res.avg*100)/100})</div>`;
+      } else {
+        el.innerHTML = `<div class="text-sm">${new Date(key).toLocaleDateString()}</div><div class="text-sm text-text-muted">no entry</div>`;
       }
-      // update right label that originally shows "Neutral"
-      const rightLabel = bar.closest('section') && bar.closest('section').querySelector('span.font-semibold') || null;
-      if (rightLabel) {
-        const word = v >= 4 ? 'Positive' : (v === 3 ? 'Neutral' : 'Low');
-        rightLabel.textContent = word;
-      }
+      pastList.appendChild(el);
     }
+  }
 
-    // initialize
-    updateUIFromValue(Number(slider.value));
+  function showResult(payload){
+    quizResult.classList.remove('hidden');
+    quizMoodLabel.textContent = payload.moodLabel + ' · mood ' + payload.moodValue;
+    quizScoreLabel.textContent = 'Score: ' + (Math.round(payload.avg*100)/100) + ' (avg)';
+    quizNote.value = payload.note || '';
+    setFormDisabled(true);
+  }
 
-    // slider event
-    slider.addEventListener('input', (e) => updateUIFromValue(Number(e.target.value)));
+  function setFormDisabled(disabled){
+    const inputs = quizForm.querySelectorAll('input[type="radio"]');
+    inputs.forEach(i => i.disabled = disabled);
+    submitQuizBtn.disabled = disabled;
+    skipQuizBtn.disabled = disabled;
+  }
 
-    // ----- storage helpers -----
-    function loadEntries() {
-      try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch (e) { return []; }
-    }
-    function saveEntries(arr) {
-      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(arr)); } catch (e) { console.warn(e); }
-    }
-
-    // local storage key (constant)
-    const STORAGE_KEY = 'mood_entries_v1';
-
-    // compute stats
-    function computeStats(entries) {
-      if (!entries.length) return { avg: 3, percent: 0 };
-      const last7 = entries.slice(-7);
-      const avg = (last7.reduce((s, e) => s + (e.mood || 3), 0) / last7.length);
-      const prev = entries.slice(-14, -7);
-      const prevAvg = prev.length ? (prev.reduce((s, e) => s + (e.mood || 3), 0) / prev.length) : avg;
-      const percent = prevAvg ? Math.round(((avg - prevAvg) / prevAvg) * 100) : 0;
-      return { avg, percent };
-    }
-
-    // render sparkline into the chartSvg (safe)
-    function renderSparkline(entries) {
-      if (!chartSvg) return;
-      // remove previously generated
-      Array.from(chartSvg.querySelectorAll('._generated')).forEach(n => n.remove());
-      const last7 = entries.slice(-7);
-      if (!last7.length) return;
-      const viewW = 472, viewH = 150;
-      const pts = last7.map((e, i) => {
-        const x = (i / (Math.max(1, last7.length - 1))) * viewW;
-        const y = viewH - ((e.mood - 1) / 4) * (viewH - 20) - 10;
-        return { x, y };
-      });
-      // build polyline path
-      let d = `M ${pts[0].x} ${pts[0].y}`;
-      for (let i = 1; i < pts.length; i++) d += ` L ${pts[i].x} ${pts[i].y}`;
-      const areaD = d + ` L ${pts[pts.length - 1].x} ${viewH} L ${pts[0].x} ${viewH} Z`;
-      const ns = 'http://www.w3.org/2000/svg';
-      const area = document.createElementNS(ns, 'path');
-      area.setAttribute('d', areaD);
-      area.setAttribute('fill', 'url(#chart-gradient)');
-      area.setAttribute('class', '_generated');
-      chartSvg.appendChild(area);
-      const stroke = document.createElementNS(ns, 'path');
-      stroke.setAttribute('d', d);
-      stroke.setAttribute('fill', 'none');
-      stroke.setAttribute('stroke', '#13ec13');
-      stroke.setAttribute('stroke-width', '3');
-      stroke.setAttribute('class', '_generated');
-      chartSvg.appendChild(stroke);
-    }
-
-    // update overall UI
-    function updateOverallUI(entries) {
-      const { avg, percent } = computeStats(entries);
-      if (overallValue) {
-        const word = avg >= 4 ? 'Positive' : (avg >= 3 ? 'Neutral' : 'Low');
-        overallValue.textContent = word;
-      }
-      if (percentEl) {
-        percentEl.textContent = (percent >= 0 ? '+' + percent + '%' : percent + '%');
-        percentEl.classList.toggle('text-green-500', percent > 0);
-        percentEl.classList.toggle('text-red-400', percent < 0);
-      }
-    }
-
-    // Save mood action
-    function saveMood() {
-      const mood = Number(slider.value) || 3;
-      const noteText = note ? (note.value || '') : '';
-      const entries = loadEntries();
-      const newEntry = { id: 'm-' + Date.now(), mood, note: noteText, createdAt: new Date().toISOString() };
-      entries.push(newEntry);
-      saveEntries(entries);
-      renderSparkline(entries);
-      updateOverallUI(entries);
-      toast('Mood saved');
-      if (note) note.value = '';
-    }
-
-    // attach save handler if button exists
-    if (saveBtn) {
-      saveBtn.addEventListener('click', function (e) {
-        e.preventDefault();
-        saveMood();
-      });
+  // init
+  renderQuestions();
+  const existing = loadResult(today);
+  if (existing){
+    if (existing.skipped){
+      quizResult.classList.remove('hidden');
+      quizMoodLabel.textContent = 'Skipped';
+      quizScoreLabel.textContent = '';
+      setFormDisabled(true);
     } else {
-      log('Save button not found — mood saving disabled until a button with text "Save Mood" is present.');
+      showResult(existing);
     }
+  } else {
+    setFormDisabled(false);
+  }
+  renderPast();
 
-    // initial render from storage
-    const initialEntries = (function () {
-      try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch (e) { return []; }
-    })();
-    renderSparkline(initialEntries);
-    updateOverallUI(initialEntries);
+  // form submit
+  quizForm.addEventListener('submit', function(e){
+    e.preventDefault();
+    const answers = [];
+    for (let i=0;i<todaysQuestions.length;i++){
+      const radios = document.getElementsByName('q-'+i);
+      let val = null;
+      for (const r of radios) if (r.checked) { val = Number(r.value); break; }
+      if (val === null) { alert('Please answer all questions'); return; }
+      answers.push(val);
+    }
+    const computed = computeScore(answers);
+    const payload = { date: today, answers, sum: computed.sum, avg: computed.avg, moodValue: computed.moodValue, moodLabel: computed.moodLabel, note: quizNote.value||'', createdAt: new Date().toISOString() };
+    saveResult(today, payload);
+    showResult(payload);
+    renderPast();
+    // optionally also save as a mood entry for trend
+    const moodEntry = { id: 'q-'+Date.now(), mood: computed.moodValue, note: payload.note, createdAt: new Date().toISOString() };
+    saveMoodEntry(moodEntry);
+  });
 
-    // keyboard shortcut: Ctrl+Enter in textarea to save
-    if (note) note.addEventListener('keydown', function (ev) {
-      if (ev.key === 'Enter' && ev.ctrlKey) {
-        ev.preventDefault();
-        saveMood();
-      }
-    });
+  // skip
+  skipQuizBtn.addEventListener('click', function(){
+    if (!confirm('Skip today\\'s quiz?')) return;
+    saveResult(today, { date: today, skipped: true, createdAt: new Date().toISOString() });
+    setFormDisabled(true);
+    quizResult.classList.remove('hidden');
+    quizMoodLabel.textContent = 'Skipped';
+    quizScoreLabel.textContent = '';
+    renderPast();
+  });
 
-    // Expose for debugging
-    window._CampusCalmMood = {
-      saveMood, loadEntries: () => JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')
-    };
+  // retake
+  retakeQuizBtn.addEventListener('click', function(){
+    if (!confirm('Retake will overwrite today\\'s result. Continue?')) return;
+    localStorage.removeItem(storageKeyForDate(today));
+    setFormDisabled(false);
+    quizResult.classList.add('hidden');
+    // reset radios default (2)
+    for (let i=0;i<todaysQuestions.length;i++){
+      const radios = document.getElementsByName('q-'+i);
+      radios.forEach(r => r.checked = (r.value === '2'));
+    }
+    quizNote.value = '';
+    renderPast();
+  });
 
-    log('Mood tracker initialized.');
-  }); // ready
+  // save quiz note
+  saveQuizNoteBtn.addEventListener('click', function(){
+    const saved = loadResult(today);
+    if (!saved) { alert('Please submit the quiz first.'); return; }
+    saved.note = quizNote.value || '';
+    saveResult(today, saved);
+    alert('Note saved.');
+    renderPast();
+  });
+  clearQuizNoteBtn.addEventListener('click', ()=> quizNote.value = '');
+
 })();
 </script>
 </body>
