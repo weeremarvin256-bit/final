@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <script>
   tailwind.config = {
@@ -23,17 +23,22 @@
   }
 </script>
 <title>Daily Quiz — Mood Tracker</title>
-<style> body { min-height: 100vh; } </style>
+<style>
+  body { min-height: 100vh; }
+  .collapsible { transition: max-height 300ms ease, opacity 300ms ease; overflow: hidden; }
+  .collapsed { max-height: 0 !important; opacity: 0; padding: 0 !important; margin: 0 !important; }
+  .expanded { max-height: 1500px; opacity: 1; }
+  /* small helper for saved note summary */
+  .note-summary { background: rgba(255,255,255,0.03); border-radius: 0.5rem; padding: 0.5rem; font-size: 0.9rem; color: var(--tw-text-opacity); }
+</style>
 </head>
 <body class="bg-background-dark font-display text-neutral-200">
 <div class="flex h-full min-h-screen w-full flex-col">
   <header class="sticky top-0 z-10 bg-background-dark/80 px-4 py-3 backdrop-blur-sm">
     <div class="flex items-center">
-      <button class="flex h-10 w-10 items-center justify-center rounded-full text-neutral-400 hover:bg-surface-dark interactive-element" aria-label="back">
-        ‹
-      </button>
+      <div class="w-10 h-10"></div>
       <h1 class="flex-1 text-center text-lg font-bold text-neutral-100">Mood Tracker</h1>
-      <div class="h-10 w-10"></div>
+      <div class="w-10 h-10"></div>
     </div>
   </header>
 
@@ -55,16 +60,19 @@
           <div id="quizDateLabel" class="text-sm text-text-subtle"></div>
         </div>
 
+        <!-- QUESTIONS (collapsible) -->
         <form id="quizForm" class="space-y-4">
-          <div id="questionsList" class="space-y-3"></div>
-
-          <div class="flex items-center gap-3">
-            <button id="submitQuizBtn" type="submit" class="px-4 py-2 bg-primary text-black rounded-lg">Submit Quiz</button>
-            <button id="skipQuizBtn" type="button" class="px-4 py-2 border rounded-lg">Skip</button>
-            <div id="quizStatus" class="text-sm text-text-subtle"></div>
+          <div id="questionsContainer" class="collapsible expanded" style="max-height:1500px;">
+            <div id="questionsList" class="space-y-3"></div>
+            <div class="flex items-center gap-3 mt-2">
+              <button id="submitQuizBtn" type="submit" class="px-4 py-2 bg-primary text-black rounded-lg">Submit Quiz</button>
+              <button id="skipQuizBtn" type="button" class="px-4 py-2 border rounded-lg">Skip</button>
+              <div id="quizStatus" class="text-sm text-text-subtle"></div>
+            </div>
           </div>
         </form>
 
+        <!-- RESULT (visible after submit) -->
         <div id="quizResult" class="mt-4 hidden border-t pt-4">
           <div class="flex items-center justify-between">
             <div>
@@ -77,22 +85,33 @@
             </div>
           </div>
 
-          <div id="quizNoteArea" class="mt-3">
+          <!-- note area (collapsible after save) -->
+          <div id="quizNoteWrap" class="mt-3 collapsible expanded" style="max-height:800px;">
             <label class="text-sm text-neutral-200">Add a note (optional)</label>
             <textarea id="quizNote" rows="3" class="w-full mt-2 p-2 border rounded bg-background-dark text-neutral-200" placeholder="How are you feeling?"></textarea>
             <div class="mt-2 flex gap-2">
               <button id="saveQuizNoteBtn" class="px-4 py-2 bg-primary text-black rounded-lg">Save Note</button>
               <button id="clearQuizNoteBtn" class="px-4 py-2 border rounded-lg">Clear</button>
             </div>
+            <div id="noteSavedSummary" class="mt-2 hidden note-summary"></div>
+          </div>
+
+          <!-- chart for last 14 days -->
+          <div class="mt-5">
+            <h4 class="text-sm font-semibold text-neutral-200 mb-2">Last 14 days — mood values (1 low → 5 high)</h4>
+            <div class="rounded-xl bg-background-dark/60 p-3">
+              <svg id="historyChart" viewBox="0 0 700 140" width="100%" height="140" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"></svg>
+            </div>
           </div>
         </div>
 
+        <!-- past list (small) -->
         <div id="pastResults" class="mt-6">
           <h4 class="text-sm font-semibold text-neutral-200 mb-2">Past quizzes (last 14 days)</h4>
           <div id="pastList" class="space-y-2 text-sm text-text-muted"></div>
         </div>
       </section>
-      <!-- END DAILY QUIZ -->
+      <!-- ===== end daily quiz ===== -->
 
     </div>
   </main>
@@ -106,12 +125,8 @@
 </div>
 
 <script>
-/*
-  Robust daily 5-question quiz.
-  Wait for DOMContentLoaded then initialize.
-*/
-document.addEventListener('DOMContentLoaded', function () {
-  // question bank
+document.addEventListener('DOMContentLoaded', () => {
+  // Question bank
   const QUESTION_BANK = [
     "I felt calm and relaxed today.",
     "I was able to concentrate on tasks without much distraction.",
@@ -128,6 +143,7 @@ document.addEventListener('DOMContentLoaded', function () {
   // DOM refs
   const quizDateLabel = document.getElementById('quizDateLabel');
   const questionsList = document.getElementById('questionsList');
+  const questionsContainer = document.getElementById('questionsContainer');
   const quizForm = document.getElementById('quizForm');
   const quizResult = document.getElementById('quizResult');
   const quizMoodLabel = document.getElementById('quizMoodLabel');
@@ -139,43 +155,34 @@ document.addEventListener('DOMContentLoaded', function () {
   const submitQuizBtn = document.getElementById('submitQuizBtn');
   const skipQuizBtn = document.getElementById('skipQuizBtn');
   const retakeQuizBtn = document.getElementById('retakeQuizBtn');
+  const quizNoteWrap = document.getElementById('quizNoteWrap');
+  const noteSavedSummary = document.getElementById('noteSavedSummary');
+  const historyChart = document.getElementById('historyChart');
 
-  if (!questionsList) {
-    // show error on page if container not found
-    const err = document.createElement('div');
-    err.className = 'text-red-400';
-    err.textContent = 'Quiz failed to load (questions container missing).';
-    document.getElementById('daily-quiz').prepend(err);
-    console.error('questionsList element not found');
-    return;
-  }
-
-  // date helpers
+  // Utilities
   function todayKey(){ return new Date().toISOString().slice(0,10); }
   function storageKeyForDate(d){ return 'daily_quiz_' + d; }
-
-  // seeded shuffle (deterministic each day)
+  function escapeHtml(s=''){ return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;'); }
   function hashStr(s){ let h=2166136261>>>0; for(let i=0;i<s.length;i++){ h = Math.imul(h ^ s.charCodeAt(i), 16777619) >>> 0; } return h; }
   function mulberry32(a){ return function(){ var t = a += 0x6D2B79F5; t = Math.imul(t ^ t>>>15, t | 1); t ^= t + Math.imul(t ^ t>>>7, t | 61); return ((t ^ t>>>14) >>> 0) / 4294967296; } }
-  function seededShuffle(arr, seed){
-    const out = arr.slice(); const rnd = mulberry32(hashStr(seed));
-    for (let i = out.length - 1; i > 0; i--) {
-      const j = Math.floor(rnd() * (i + 1));
-      [out[i], out[j]] = [out[j], out[i]];
-    }
-    return out;
-  }
+  function seededShuffle(arr, seed){ const out = arr.slice(); const rnd = mulberry32(hashStr(seed)); for (let i = out.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [out[i], out[j]] = [out[j], out[i]]; } return out; }
 
-  // escape
-  function escapeHtml(s=''){ return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;'); }
+  // Mood entries key used for trends
+  const MOOD_KEY = 'mood_entries_v1';
 
-  // build today's questions
+  // Chart helpers
+  function loadMoodEntries(){ try { return JSON.parse(localStorage.getItem(MOOD_KEY)||'[]'); } catch(e){ return []; } }
+  function saveMoodEntry(entry){ try { const arr = loadMoodEntries(); arr.push(entry); localStorage.setItem(MOOD_KEY, JSON.stringify(arr)); } catch(e){ console.warn(e); } }
+
+  function loadResult(dateStr){ try { const raw = localStorage.getItem(storageKeyForDate(dateStr)); return raw ? JSON.parse(raw) : null; } catch { return null; } }
+  function saveResult(dateStr, payload){ try { localStorage.setItem(storageKeyForDate(dateStr), JSON.stringify(payload)); } catch(e){ console.warn(e); } }
+
+  // Build today's questions
   const today = todayKey();
   quizDateLabel.textContent = new Date().toLocaleDateString();
   const todaysQuestions = seededShuffle(QUESTION_BANK, today).slice(0,5);
 
-  // render
-  function renderQuestions() {
+  function renderQuestions(){
     questionsList.innerHTML = '';
     todaysQuestions.forEach((q, idx) => {
       const id = 'q-' + idx;
@@ -188,8 +195,7 @@ document.addEventListener('DOMContentLoaded', function () {
             <label class="flex items-center gap-2">
               <input name="${id}" type="radio" value="${v}" class="form-radio" ${v===2?'checked':''} />
               <span class="w-6 text-center">${v}</span>
-            </label>
-          `).join('')}
+            </label>`).join('')}
           <div class="ml-3 text-xs text-text-muted">0=Never · 4=Always</div>
         </div>
       `;
@@ -197,11 +203,11 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  // compute score
+  // compute score and map to label
   function computeScore(answers){
-    const sum = answers.reduce((s,a)=>s + (Number(a)||0),0);
-    const avg = sum / answers.length;
-    const moodValue = Math.round((avg / 4) * 4) + 1; // map 0..4 -> 1..5
+    const sum = answers.reduce((s,a)=>s+(Number(a)||0),0);
+    const avg = answers.length ? (sum / answers.length) : 0;
+    const moodValue = Math.round((avg / 4) * 4) + 1; // 1..5
     let moodLabel = 'Neutral';
     if (avg >= 3.25) moodLabel = 'Positive';
     else if (avg >= 1.75) moodLabel = 'Neutral';
@@ -209,63 +215,154 @@ document.addEventListener('DOMContentLoaded', function () {
     return { sum, avg, moodValue, moodLabel };
   }
 
-  // storage helpers
-  function saveResult(dateStr, payload){ try { localStorage.setItem(storageKeyForDate(dateStr), JSON.stringify(payload)); } catch(e){ console.warn(e); } }
-  function loadResult(dateStr){ try { const raw = localStorage.getItem(storageKeyForDate(dateStr)); return raw ? JSON.parse(raw) : null; } catch { return null; } }
-
-  // past rendering
+  // Past list render
   function renderPast(){
     pastList.innerHTML = '';
     for (let i=0;i<14;i++){
       const d = new Date(); d.setDate(d.getDate() - i);
       const key = d.toISOString().slice(0,10);
       const res = loadResult(key);
-      const el = document.createElement('div');
-      el.className = 'flex items-center justify-between p-2 rounded';
-      if (res) el.innerHTML = `<div class="text-sm">${new Date(key).toLocaleDateString()}</div><div class="text-sm font-semibold">${escapeHtml(res.moodLabel)} (${Math.round(res.avg*100)/100})</div>`;
-      else el.innerHTML = `<div class="text-sm">${new Date(key).toLocaleDateString()}</div><div class="text-sm text-text-muted">no entry</div>`;
+      const el = document.createElement('div'); el.className = 'flex items-center justify-between p-2 rounded';
+      if (res){
+        el.innerHTML = `<div class="text-sm">${new Date(key).toLocaleDateString()}</div><div class="text-sm font-semibold">${escapeHtml(res.moodLabel)} (${Math.round(res.avg*100)/100})</div>`;
+      } else {
+        el.innerHTML = `<div class="text-sm">${new Date(key).toLocaleDateString()}</div><div class="text-sm text-text-muted">no entry</div>`;
+      }
       pastList.appendChild(el);
     }
   }
 
-  // show result UI
+  // Chart drawing: simple bar chart across 14 days mapping mood 1..5 to height
+  function renderHistoryChart(){
+    const svg = historyChart;
+    if (!svg) return;
+    // read last 14 days moodValues from daily_quiz or fallback to mood_entries
+    const days = [];
+    for (let i=13;i>=0;i--){ // oldest left, newest right
+      const d = new Date(); d.setDate(d.getDate() - i);
+      const key = d.toISOString().slice(0,10);
+      const res = loadResult(key);
+      if (res && !res.skipped) days.push({ date: key, mood: res.moodValue || null });
+      else {
+        // fallback: try to find a mood_entries item on that date (approx matching date part)
+        let fallback = null;
+        try {
+          const entries = loadMoodEntries();
+          fallback = entries.find(en => en.createdAt && en.createdAt.slice(0,10) === key);
+        } catch {}
+        days.push({ date: key, mood: fallback ? (fallback.mood || null) : null });
+      }
+    }
+
+    // svg size
+    const W = 700, H = 140, padding = 8;
+    svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+    // clear
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+
+    // background grid lines
+    for (let level=0; level<=4; level++){
+      const y = padding + (H - padding*2) * (1 - (level/4));
+      const line = document.createElementNS('http://www.w3.org/2000/svg','line');
+      line.setAttribute('x1', 0); line.setAttribute('x2', W);
+      line.setAttribute('y1', y); line.setAttribute('y2', y);
+      line.setAttribute('stroke', 'rgba(255,255,255,0.04)');
+      svg.appendChild(line);
+      // label left
+      const lab = document.createElementNS('http://www.w3.org/2000/svg','text');
+      lab.setAttribute('x', 4); lab.setAttribute('y', y - 4);
+      lab.setAttribute('fill', 'rgba(255,255,255,0.35)');
+      lab.setAttribute('font-size', '10');
+      lab.textContent = (4 - level) + 1; // show 5..1
+      svg.appendChild(lab);
+    }
+
+    const barW = (W - padding*2) / days.length;
+    days.forEach((dObj, i) => {
+      const x = padding + i * barW;
+      const mood = dObj.mood; // 1..5 or null
+      const maxMood = 5;
+      const barPadding = 6;
+      const usableH = H - padding*2;
+      const h = mood ? ((mood / maxMood) * usableH) : 4; // tiny bar if null
+      const y = H - padding - h;
+      const rect = document.createElementNS('http://www.w3.org/2000/svg','rect');
+      rect.setAttribute('x', x + barPadding/2);
+      rect.setAttribute('y', y);
+      rect.setAttribute('width', Math.max(6, barW - barPadding));
+      rect.setAttribute('height', h);
+      rect.setAttribute('rx', 3);
+      rect.setAttribute('fill', mood ? '#13ec13' : 'rgba(255,255,255,0.06)');
+      rect.setAttribute('opacity', 0.95);
+      svg.appendChild(rect);
+
+      // small date label under bars for every 2nd day
+      if (i % 2 === 0) {
+        const dt = document.createElementNS('http://www.w3.org/2000/svg','text');
+        dt.setAttribute('x', x + (barW/2));
+        dt.setAttribute('y', H - 2);
+        dt.setAttribute('fill', 'rgba(255,255,255,0.28)');
+        dt.setAttribute('font-size', '10');
+        dt.setAttribute('text-anchor', 'middle');
+        const short = new Date(dObj.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+        dt.textContent = short;
+        svg.appendChild(dt);
+      }
+    });
+  }
+
+  // Show result UI and collapse questions area
   function showResult(payload){
-    quizResult.classList.remove('hidden');
-    quizMoodLabel.textContent = payload.moodLabel + ' • mood ' + payload.moodValue;
+    // set UI values
+    quizMoodLabel.textContent = payload.moodLabel + ' · mood ' + payload.moodValue;
     quizScoreLabel.textContent = 'Score: ' + (Math.round(payload.avg * 100) / 100) + ' (avg)';
     quizNote.value = payload.note || '';
-    // disable radios and submit to prevent accidental changes
+    // collapse questions area
+    questionsContainer.classList.remove('expanded');
+    questionsContainer.classList.add('collapsed');
+    // show result block
+    quizResult.classList.remove('hidden');
+    // show note area expanded
+    quizNoteWrap.classList.remove('collapsed'); quizNoteWrap.classList.add('expanded');
+    // disable radio inputs
     setFormDisabled(true);
+    // update chart and past list
+    renderPast();
+    renderHistoryChart();
   }
 
   function setFormDisabled(disabled){
-    const inputs = quizForm.querySelectorAll('input[type="radio"]');
+    const inputs = questionsList.querySelectorAll('input[type="radio"]');
     inputs.forEach(i => i.disabled = disabled);
     submitQuizBtn.disabled = disabled;
     skipQuizBtn.disabled = disabled;
   }
 
-  // init
+  // Initialize
   renderQuestions();
   const existing = loadResult(today);
-  if (existing) {
-    if (existing.skipped) {
+  if (existing){
+    if (existing.skipped){
       quizResult.classList.remove('hidden');
       quizMoodLabel.textContent = 'Skipped';
       quizScoreLabel.textContent = '';
       setFormDisabled(true);
+      questionsContainer.classList.add('collapsed');
     } else {
       showResult(existing);
     }
   } else {
+    // ensure questions area expanded
+    questionsContainer.classList.remove('collapsed'); questionsContainer.classList.add('expanded');
+    quizResult.classList.add('hidden');
     setFormDisabled(false);
   }
   renderPast();
+  renderHistoryChart();
 
-  // submit handler
+  // form submit
   quizForm.addEventListener('submit', function(e){
     e.preventDefault();
-    // collect answers
     const answers = [];
     for (let i=0;i<todaysQuestions.length;i++){
       const radios = document.getElementsByName('q-' + i);
@@ -277,17 +374,9 @@ document.addEventListener('DOMContentLoaded', function () {
     const computed = computeScore(answers);
     const payload = { date: today, answers, sum: computed.sum, avg: computed.avg, moodValue: computed.moodValue, moodLabel: computed.moodLabel, note: quizNote.value||'', createdAt: new Date().toISOString() };
     saveResult(today, payload);
+    // also save to mood entries for trend
+    saveMoodEntry({ id:'q-'+Date.now(), mood: computed.moodValue, note: payload.note, createdAt: new Date().toISOString() });
     showResult(payload);
-    renderPast();
-
-    // optional: save as mood entry for trend (simple model)
-    try {
-      const MOOD_KEY = 'mood_entries_v1';
-      const raw = localStorage.getItem(MOOD_KEY) || '[]';
-      const arr = JSON.parse(raw);
-      arr.push({ id:'q-'+Date.now(), mood: computed.moodValue, note: payload.note, createdAt: new Date().toISOString() });
-      localStorage.setItem(MOOD_KEY, JSON.stringify(arr));
-    } catch(e){ console.warn('saving mood entry failed', e); }
   });
 
   // skip
@@ -295,37 +384,57 @@ document.addEventListener('DOMContentLoaded', function () {
     if (!confirm("Skip today's quiz?")) return;
     saveResult(today, { date: today, skipped: true, createdAt: new Date().toISOString() });
     setFormDisabled(true);
+    questionsContainer.classList.add('collapsed');
     quizResult.classList.remove('hidden');
     quizMoodLabel.textContent = 'Skipped';
     quizScoreLabel.textContent = '';
     renderPast();
+    renderHistoryChart();
   });
 
   // retake
   retakeQuizBtn.addEventListener('click', function(){
     if (!confirm("Retake will overwrite today's result. Continue?")) return;
     localStorage.removeItem(storageKeyForDate(today));
-    setFormDisabled(false);
+    // remove today's mood entry from mood_entries if it was added (simple filter)
+    try {
+      const arr = loadMoodEntries().filter(e => !(e.createdAt && e.createdAt.slice(0,10) === today && String(e.id || '').startsWith('q-')));
+      localStorage.setItem(MOOD_KEY, JSON.stringify(arr));
+    } catch(e){ console.warn(e); }
+    // expand questions again
+    questionsContainer.classList.remove('collapsed'); questionsContainer.classList.add('expanded');
+    // hide result
     quizResult.classList.add('hidden');
-    // reset radios to default
+    // enable inputs & reset radios
+    setFormDisabled(false);
     for (let i=0;i<todaysQuestions.length;i++){
       const radios = document.getElementsByName('q-'+i);
       radios.forEach(r => r.checked = (r.value === '2'));
     }
     quizNote.value = '';
+    noteSavedSummary.classList.add('hidden');
     renderPast();
+    renderHistoryChart();
   });
 
-  // save note
-  if (saveQuizNoteBtn) saveQuizNoteBtn.addEventListener('click', function(){
+  // save note — after saving note collapse note area
+  saveQuizNoteBtn.addEventListener('click', function(){
     const saved = loadResult(today);
     if (!saved) { alert('Please submit the quiz first.'); return; }
     saved.note = quizNote.value || '';
     saveResult(today, saved);
-    alert('Note saved.');
+    // show short summary and collapse note field
+    noteSavedSummary.textContent = saved.note ? ('Saved note: ' + saved.note.slice(0,200)) : 'No note saved';
+    noteSavedSummary.classList.remove('hidden');
+    // collapse note area
+    quizNoteWrap.classList.remove('expanded'); quizNoteWrap.classList.add('collapsed');
     renderPast();
+    renderHistoryChart();
   });
-  if (clearQuizNoteBtn) clearQuizNoteBtn.addEventListener('click', ()=> quizNote.value = '');
+
+  clearQuizNoteBtn.addEventListener('click', function(){
+    quizNote.value = '';
+  });
 
 }); // DOMContentLoaded
 </script>
