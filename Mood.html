@@ -1,585 +1,170 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<script>
-  tailwind.config = {
-    darkMode: "class",
-    theme: {
-      extend: {
-        colors: {
-          primary: "#13ec13",
-          "background-light": "#1a1a1a",
-          "background-dark": "#101010",
-          "surface-dark": "#1f1f1f",
-          "text-muted": "#888888",
-          "text-subtle": "#555555",
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Mood Tracker</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            primary: "#13ec13",
+            "background-dark": "#101010",
+            "surface-dark": "#1f1f1f",
+            "text-muted": "#888888",
+            "text-subtle": "#555555",
+          },
+          fontFamily: { display: ["Inter"] },
         },
-        fontFamily: { display: ["Inter"] },
-      }
-    }
-  }
-</script>
-<title>Daily Quiz — Mood Tracker (Most recent only)</title>
-<style>
-  body { min-height: 100vh; }
-  .collapsible { transition: max-height 300ms ease, opacity 300ms ease; overflow: hidden; }
-  .collapsed { max-height: 0 !important; opacity: 0; padding: 0 !important; margin: 0 !important; }
-  .expanded { max-height: 1500px; opacity: 1; }
-  .note-summary { background: rgba(255,255,255,0.03); border-radius: 0.5rem; padding: 0.5rem; font-size: 0.9rem; color: var(--tw-text-opacity); }
-</style>
+      },
+    };
+  </script>
+  <style>
+    .hidden-section { display: none; }
+  </style>
 </head>
-<body class="bg-background-dark font-display text-neutral-200">
-<div class="flex h-full min-h-screen w-full flex-col">
+<body class="bg-background-dark text-neutral-200 font-display">
+<div class="flex flex-col min-h-screen">
+  <!-- Header -->
   <header class="sticky top-0 z-10 bg-background-dark/80 px-4 py-3 backdrop-blur-sm">
-    <div class="flex items-center">
-      <div class="w-10 h-10"></div>
-      <h1 class="flex-1 text-center text-lg font-bold text-neutral-100">Mood Tracker</h1>
-      <div class="w-10 h-10"></div>
-    </div>
+    <h1 class="text-center text-lg font-bold text-neutral-100">Mood Tracker</h1>
   </header>
 
   <main class="flex-1 px-4 py-6">
     <div class="mx-auto max-w-md">
 
-      <section class="mb-8 text-center">
-        <h2 class="text-3xl font-bold text-neutral-100">How are you feeling today?</h2>
-        <p class="mt-2 text-text-muted">Your thoughts are safe here. Take a moment for yourself.</p>
-      </section>
-
-      <!-- DAILY QUIZ -->
-      <section id="daily-quiz" class="mb-8 rounded-xl bg-surface-dark p-5 shadow-lg">
-        <div class="flex items-center justify-between mb-3">
-          <div>
-            <h3 class="text-lg font-bold text-neutral-100">Daily 5-Question Check</h3>
-            <p class="text-sm text-text-muted">Answer 5 quick statements to get a daily mood snapshot.</p>
+      <!-- Daily Questions -->
+      <section id="quiz-section" class="mb-6 rounded-xl bg-surface-dark p-4 shadow-lg">
+        <h2 class="text-xl font-bold mb-2">Daily Mood Quiz</h2>
+        <form id="quiz-form" class="space-y-3">
+          <div><label>1. How was your sleep?</label><br>
+            <select class="w-full p-2 rounded bg-background-dark border border-neutral-700">
+              <option>Poor</option><option>Average</option><option>Good</option>
+            </select>
           </div>
-          <div id="quizDateLabel" class="text-sm text-text-subtle"></div>
-        </div>
-
-        <!-- QUESTIONS (collapsible) -->
-        <form id="quizForm" class="space-y-4">
-          <div id="questionsContainer" class="collapsible expanded" style="max-height:1500px;">
-            <div id="questionsList" class="space-y-3"></div>
-            <div class="flex items-center gap-3 mt-2">
-              <button id="submitQuizBtn" type="submit" class="px-4 py-2 bg-primary text-black rounded-lg">Submit Quiz</button>
-              <button id="skipQuizBtn" type="button" class="px-4 py-2 border rounded-lg">Skip</button>
-              <div id="quizStatus" class="text-sm text-text-subtle"></div>
-            </div>
+          <div><label>2. Do you feel stressed?</label><br>
+            <select class="w-full p-2 rounded bg-background-dark border border-neutral-700">
+              <option>Yes</option><option>No</option>
+            </select>
           </div>
+          <div><label>3. How's your energy?</label><br>
+            <select class="w-full p-2 rounded bg-background-dark border border-neutral-700">
+              <option>Low</option><option>Medium</option><option>High</option>
+            </select>
+          </div>
+          <div><label>4. Do you feel motivated?</label><br>
+            <select class="w-full p-2 rounded bg-background-dark border border-neutral-700">
+              <option>No</option><option>Somewhat</option><option>Yes</option>
+            </select>
+          </div>
+          <div><label>5. Are you feeling connected to others?</label><br>
+            <select class="w-full p-2 rounded bg-background-dark border border-neutral-700">
+              <option>No</option><option>Sometimes</option><option>Yes</option>
+            </select>
+          </div>
+          <button type="submit" class="mt-4 w-full bg-primary text-black font-bold py-2 rounded">Submit</button>
         </form>
+      </section>
 
-        <!-- RESULT (visible after submit) -->
-        <div id="quizResult" class="mt-4 hidden border-t pt-4">
-          <div class="flex items-center justify-between">
-            <div>
-              <div class="text-sm text-text-muted">Most recent result</div>
-              <div id="quizMoodLabel" class="text-2xl font-bold text-neutral-100">—</div>
-              <div id="quizScoreLabel" class="text-sm text-text-subtle"></div>
-              <div id="mostRecentDate" class="text-xs text-text-subtle mt-1"></div>
-            </div>
-            <div>
-              <button id="retakeQuizBtn" class="px-3 py-2 border rounded-lg">Retake</button>
-            </div>
-          </div>
+      <!-- Notes -->
+      <section id="note-section" class="mb-6 rounded-xl bg-surface-dark p-4 shadow-lg">
+        <h2 class="text-xl font-bold mb-2">Daily Note</h2>
+        <textarea id="note-input" class="w-full p-2 rounded bg-background-dark border border-neutral-700" placeholder="Write about your day..."></textarea>
+        <button id="save-note" class="mt-3 w-full bg-primary text-black font-bold py-2 rounded">Save Note</button>
+      </section>
 
-          <!-- note area (collapsible after save) -->
-          <div id="quizNoteWrap" class="mt-3 collapsible expanded" style="max-height:800px;">
-            <label class="text-sm text-neutral-200">Add a note (optional)</label>
-            <textarea id="quizNote" rows="3" class="w-full mt-2 p-2 border rounded bg-background-dark text-neutral-200" placeholder="How are you feeling?"></textarea>
-            <div class="mt-2 flex gap-2">
-              <button id="saveQuizNoteBtn" class="px-4 py-2 bg-primary text-black rounded-lg">Save Note</button>
-              <button id="clearQuizNoteBtn" class="px-4 py-2 border rounded-lg">Clear</button>
-            </div>
-            <div id="noteSavedSummary" class="mt-2 hidden note-summary"></div>
-          </div>
-
-          <!-- chart for last 14 days -->
-          <div class="mt-5">
-            <h4 class="text-sm font-semibold text-neutral-200 mb-2">Last 14 days — mood values (1 low → 5 high)</h4>
-            <div class="rounded-xl bg-background-dark/60 p-3">
-              <svg id="historyChart" viewBox="0 0 700 140" width="100%" height="140" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"></svg>
-            </div>
-          </div>
-        </div>
-
-        <!-- MOST RECENT SUMMARY (single visible item) -->
-        <div id="mostRecentSummary" class="mt-6">
-          <!-- will be populated by JS with the single most recent result -->
+      <!-- Graph -->
+      <section class="mb-6 rounded-xl bg-surface-dark p-4 shadow-lg">
+        <h2 class="text-xl font-bold mb-2">Mood Trends</h2>
+        <canvas id="moodChart" height="200"></canvas>
+        <button id="togglePastResults" class="mt-4 w-full bg-neutral-700 text-white py-2 rounded">View Past Results</button>
+        <div id="pastResults" class="hidden-section mt-4">
+          <canvas id="pastMoodChart" height="200"></canvas>
         </div>
       </section>
-      <!-- ===== end daily quiz ===== -->
 
     </div>
   </main>
 
-  <footer class="sticky bottom-0 border-t border-neutral-700 bg-background-dark/80 pb-4 pt-2 backdrop-blur-sm">
+  <!-- Footer Navigation -->
+  <footer class="sticky bottom-0 border-t border-neutral-700 bg-background-dark/80 pb-2 pt-2 backdrop-blur-sm">
     <nav class="flex justify-around">
-      <a class="flex flex-col items-center gap-1 text-text-muted hover:text-neutral-200" href="#"><span class="text-xs font-medium">Home</span></a>
-      <a class="flex flex-col items-center gap-1 text-primary" href="#"><span class="text-xs font-bold">Mood</span></a>
+      <a href="Home.html" class="flex flex-col items-center text-text-muted hover:text-white">
+        <span class="material-symbols-outlined">home</span>
+        <span class="text-xs">Home</span>
+      </a>
+      <a href="Library.html" class="flex flex-col items-center text-text-muted hover:text-white">
+        <span class="material-symbols-outlined">book</span>
+        <span class="text-xs">Library</span>
+      </a>
+      <a href="Communitynew.html" class="flex flex-col items-center text-text-muted hover:text-white">
+        <span class="material-symbols-outlined">group</span>
+        <span class="text-xs">Community</span>
+      </a>
+      <a href="Mood.html" class="flex flex-col items-center text-primary">
+        <span class="material-symbols-outlined">sentiment_satisfied</span>
+        <span class="text-xs font-bold">Mood</span>
+      </a>
     </nav>
   </footer>
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', () => {
-  // ---------- Helpers & data ----------
-  const QUESTION_BANK = [
-    "I felt calm and relaxed today.",
-    "I was able to concentrate on tasks without much distraction.",
-    "I felt hopeful about my future.",
-    "I managed my worries effectively today.",
-    "I felt connected to others (friends/family) today.",
-    "I felt overwhelmed by tasks or responsibilities.",
-    "I experienced physical symptoms of stress (e.g., tense muscles).",
-    "I slept well last night.",
-    "I felt motivated to study or work today.",
-    "I found time to relax or do something I enjoy."
-  ];
+  // Sample chart data
+  const ctx = document.getElementById('moodChart').getContext('2d');
+  const moodChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
+      datasets: [{
+        label: 'Mood Score',
+        data: [3,4,2,5,4,3,4],
+        borderColor: '#13ec13',
+        backgroundColor: 'rgba(19,236,19,0.2)',
+        fill: true,
+        tension: 0.3
+      }]
+    },
+    options: { responsive: true, scales: { y: { beginAtZero: true, max: 5 } } }
+  });
 
-  // DOM refs
-  const quizDateLabel = document.getElementById('quizDateLabel');
-  const questionsList = document.getElementById('questionsList');
-  const questionsContainer = document.getElementById('questionsContainer');
-  const quizForm = document.getElementById('quizForm');
-  const quizResult = document.getElementById('quizResult');
-  const quizMoodLabel = document.getElementById('quizMoodLabel');
-  const quizScoreLabel = document.getElementById('quizScoreLabel');
-  const mostRecentDate = document.getElementById('mostRecentDate');
-  const quizNote = document.getElementById('quizNote');
-  const saveQuizNoteBtn = document.getElementById('saveQuizNoteBtn');
-  const clearQuizNoteBtn = document.getElementById('clearQuizNoteBtn');
-  const submitQuizBtn = document.getElementById('submitQuizBtn');
-  const skipQuizBtn = document.getElementById('skipQuizBtn');
-  const retakeQuizBtn = document.getElementById('retakeQuizBtn');
-  const quizNoteWrap = document.getElementById('quizNoteWrap');
-  const noteSavedSummary = document.getElementById('noteSavedSummary');
-  const historyChart = document.getElementById('historyChart');
-  const mostRecentSummary = document.getElementById('mostRecentSummary');
+  // Past results chart (hidden by default)
+  const pastCtx = document.getElementById('pastMoodChart').getContext('2d');
+  const pastMoodChart = new Chart(pastCtx, {
+    type: 'bar',
+    data: {
+      labels: ['Week 1','Week 2','Week 3','Week 4'],
+      datasets: [{
+        label: 'Average Mood',
+        data: [3.2, 4.0, 3.5, 4.2],
+        backgroundColor: '#13ec13'
+      }]
+    },
+    options: { responsive: true, scales: { y: { beginAtZero: true, max: 5 } } }
+  });
 
-  const MOOD_KEY = 'mood_entries_v1';
+  // Toggle past results
+  document.getElementById('togglePastResults').addEventListener('click', () => {
+    const past = document.getElementById('pastResults');
+    past.classList.toggle('hidden-section');
+  });
 
-  // date helpers & storage keys
-  function todayKey(){ return new Date().toISOString().slice(0,10); }
-  function storageKeyForDate(d){ return 'daily_quiz_' + d; }
-  function escapeHtml(s=''){ return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;'); }
-
-  // seeded shuffle (deterministic)
-  function hashStr(s){ let h=2166136261>>>0; for(let i=0;i<s.length;i++){ h = Math.imul(h ^ s.charCodeAt(i), 16777619) >>> 0; } return h; }
-  function mulberry32(a){ return function(){ var t = a += 0x6D2B79F5; t = Math.imul(t ^ t>>>15, t | 1); t ^= t + Math.imul(t ^ t>>>7, t | 61); return ((t ^ t>>>14) >>> 0) / 4294967296; } }
-  function seededShuffle(arr, seed){ const out = arr.slice(); const rnd = mulberry32(hashStr(seed)); for (let i = out.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [out[i], out[j]] = [out[j], out[i]]; } return out; }
-
-  // load/save helpers
-  function loadMoodEntries(){ try { return JSON.parse(localStorage.getItem(MOOD_KEY) || '[]'); } catch { return []; } }
-  function saveMoodEntry(entry){ try { const arr = loadMoodEntries(); arr.push(entry); localStorage.setItem(MOOD_KEY, JSON.stringify(arr)); } catch(e){ console.warn(e); } }
-  function loadResult(dateStr){ try { const raw = localStorage.getItem(storageKeyForDate(dateStr)); return raw ? JSON.parse(raw) : null; } catch { return null; } }
-  function saveResult(dateStr, payload){ try { localStorage.setItem(storageKeyForDate(dateStr), JSON.stringify(payload)); } catch(e){ console.warn(e); } }
-
-  // ---------- Sample data seeding (only if storage empty) ----------
-  function seedSampleDataIfEmpty() {
-    try { if (localStorage.getItem(MOOD_KEY)) return; } catch(e){ /* ignore */ }
-    const sampleMoods = [3,4,4,2,3,5,4,3,2,2,4,5,3,4]; // oldest -> newest
-    const now = new Date();
-    const moodEntries = [];
-    for (let i = 13; i >= 0; i--) {
-      const d = new Date();
-      d.setDate(d.getDate() - i);
-      const iso = d.toISOString();
-      const dateKey = iso.slice(0,10);
-      const moodVal = sampleMoods[13 - i];
-      const entry = { id: 'sample-' + dateKey, mood: moodVal, note: 'Sample data', createdAt: iso };
-      moodEntries.push(entry);
-      const answers = [Math.max(0, moodVal-1), Math.max(0,moodVal-1), Math.max(0,moodVal-1), Math.max(0,moodVal-2), Math.max(0,moodVal-2)].map(v => Math.min(v,4));
-      const avg = answers.reduce((s,a)=>s+a,0)/answers.length;
-      const moodLabel = avg >=3.25 ? 'Positive' : (avg >= 1.75 ? 'Neutral' : 'Low');
-      const payload = { date: dateKey, answers, sum: answers.reduce((s,a)=>s+a,0), avg, moodValue: moodVal, moodLabel, note: 'Sample note', createdAt: iso };
-      try { localStorage.setItem(storageKeyForDate(dateKey), JSON.stringify(payload)); } catch(e){}
-    }
-    try { localStorage.setItem(MOOD_KEY, JSON.stringify(moodEntries)); } catch(e){ console.warn('seed save failed', e); }
-  }
-
-  seedSampleDataIfEmpty();
-
-  // ---------- Quiz setup ----------
-  const today = todayKey();
-  quizDateLabel.textContent = new Date().toLocaleDateString();
-  const todaysQuestions = seededShuffle(QUESTION_BANK, today).slice(0,5);
-
-  function renderQuestions(){
-    questionsList.innerHTML = '';
-    todaysQuestions.forEach((q, idx) => {
-      const id = 'q-' + idx;
-      const wrapper = document.createElement('div');
-      wrapper.className = 'space-y-1';
-      wrapper.innerHTML = `
-        <div class="text-sm font-medium text-neutral-200">${escapeHtml(q)}</div>
-        <div class="flex items-center gap-2 text-xs text-text-muted">
-          ${[0,1,2,3,4].map(v => `
-            <label class="flex items-center gap-2">
-              <input name="${id}" type="radio" value="${v}" class="form-radio" ${v===2?'checked':''} />
-              <span class="w-6 text-center">${v}</span>
-            </label>`).join('')}
-          <div class="ml-3 text-xs text-text-muted">0=Never · 4=Always</div>
-        </div>
-      `;
-      questionsList.appendChild(wrapper);
-    });
-  }
-
-  function computeScore(answers){
-    const sum = answers.reduce((s,a)=>s+(Number(a)||0),0);
-    const avg = answers.length ? (sum / answers.length) : 0;
-    const moodValue = Math.round((avg / 4) * 4) + 1; // 1..5
-    let moodLabel = 'Neutral';
-    if (avg >= 3.25) moodLabel = 'Positive';
-    else if (avg >= 1.75) moodLabel = 'Neutral';
-    else moodLabel = 'Low';
-    return { sum, avg, moodValue, moodLabel };
-  }
-
-  // ---------- Most recent result logic ----------
-  // Finds the most recent daily_quiz entry (non-skipped). If none, falls back to latest mood entry.
-  function findMostRecentResult() {
-    const results = [];
-    for (let i=0;i<60;i++){ // check up to 60 days back
-      const d = new Date();
-      d.setDate(d.getDate() - i);
-      const key = d.toISOString().slice(0,10);
-      const res = loadResult(key);
-      if (res && !res.skipped) {
-        results.push({ date: key, payload: res, source: 'daily_quiz' });
-        break; // first found is most recent
-      }
-    }
-    if (results.length) return results[0];
-    // fallback: look into mood_entries
-    try {
-      const entries = loadMoodEntries();
-      if (entries && entries.length) {
-        // sort by createdAt descending
-        const sorted = entries.slice().sort((a,b)=> new Date(b.createdAt) - new Date(a.createdAt));
-        const latest = sorted[0];
-        return { date: latest.createdAt.slice(0,10), payload: { moodValue: latest.mood, moodLabel: latest.mood>=4?'Positive':(latest.mood>=3?'Neutral':'Low'), avg: latest.mood-1 }, source: 'mood_entry' };
-      }
-    } catch(e){}
-    return null;
-  }
-
-  function renderMostRecent() {
-    mostRecentSummary.innerHTML = '';
-    const recent = findMostRecentResult();
-    if (!recent) {
-      mostRecentSummary.innerHTML = `<div class="p-3 rounded bg-background-dark/40 text-sm text-text-muted">No previous results</div>`;
-      return;
-    }
-    const p = recent.payload;
-    const dateText = new Date(recent.date).toLocaleDateString();
-    const html = `
-      <div class="p-3 rounded bg-background-dark/40">
-        <div class="flex items-center justify-between">
-          <div>
-            <div class="text-sm text-text-muted">Most recent</div>
-            <div class="text-lg font-semibold">${escapeHtml(p.moodLabel || '')} <span class="text-sm text-text-muted">(${p.moodValue || ''})</span></div>
-            <div class="text-xs text-text-subtle mt-1">${escapeHtml(dateText)}</div>
-          </div>
-          <div class="text-sm text-text-muted">
-            <button id="viewHistoryBtn" class="px-2 py-1 border rounded text-xs">View chart</button>
-          </div>
-        </div>
-        ${p.note ? `<div class="mt-2 text-sm text-text-muted">Note: ${escapeHtml(String(p.note).slice(0,120))}</div>` : ''}
-      </div>
-    `;
-    mostRecentSummary.innerHTML = html;
-    // wire viewHistoryBtn to reveal result block and chart
-    const btn = document.getElementById('viewHistoryBtn');
-    if (btn) {
-      btn.addEventListener('click', () => {
-        // expand result and chart, collapse questions
-        questionsContainer.classList.remove('expanded'); questionsContainer.classList.add('collapsed');
-        quizResult.classList.remove('hidden');
-        // populate result fields
-        quizMoodLabel.textContent = (p.moodLabel || '') + (p.moodValue ? ' · mood ' + p.moodValue : '');
-        quizScoreLabel.textContent = p.avg ? 'Score: ' + (Math.round(p.avg*100)/100) + ' (avg)' : '';
-        mostRecentDate.textContent = dateText;
-        // collapse note area initially if no note
-        if (p.note) { quizNote.value = p.note; noteSavedSummary.textContent = p.note; noteSavedSummary.classList.remove('hidden'); quizNoteWrap.classList.add('collapsed'); }
-        else { quizNote.value = ''; quizNoteWrap.classList.remove('collapsed'); noteSavedSummary.classList.add('hidden'); }
-        renderHistoryChart();
-      });
-    }
-  }
-
-  // chart rendering (14 days)
-  function renderHistoryChart(){
-    const svg = historyChart;
-    if (!svg) return;
-    const days = [];
-    for (let i=13;i>=0;i--){ // oldest left, newest right
-      const d = new Date(); d.setDate(d.getDate() - i);
-      const key = d.toISOString().slice(0,10);
-      const res = loadResult(key);
-      if (res && !res.skipped) days.push({ date: key, mood: res.moodValue || null });
-      else {
-        let fallback = null;
-        try { fallback = loadMoodEntries().find(en => en.createdAt && en.createdAt.slice(0,10) === key); } catch(e){}
-        days.push({ date: key, mood: fallback ? (fallback.mood || null) : null });
-      }
-    }
-    const W = 700, H = 140, padding = 8;
-    svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
-    while (svg.firstChild) svg.removeChild(svg.firstChild);
-
-    for (let level=0; level<=4; level++){
-      const y = padding + (H - padding*2) * (1 - (level/4));
-      const line = document.createElementNS('http://www.w3.org/2000/svg','line');
-      line.setAttribute('x1', 0); line.setAttribute('x2', W); line.setAttribute('y1', y); line.setAttribute('y2', y);
-      line.setAttribute('stroke', 'rgba(255,255,255,0.04)');
-      svg.appendChild(line);
-      const lab = document.createElementNS('http://www.w3.org/2000/svg','text');
-      lab.setAttribute('x', 4); lab.setAttribute('y', y - 4);
-      lab.setAttribute('fill', 'rgba(255,255,255,0.35)'); lab.setAttribute('font-size', '10');
-      lab.textContent = (4 - level) + 1;
-      svg.appendChild(lab);
-    }
-
-    const barW = (W - padding*2) / days.length;
-    days.forEach((dObj, i) => {
-      const x = padding + i * barW;
-      const mood = dObj.mood;
-      const maxMood = 5;
-      const barPadding = 6;
-      const usableH = H - padding*2;
-      const h = mood ? ((mood / maxMood) * usableH) : 4;
-      const y = H - padding - h;
-      const rect = document.createElementNS('http://www.w3.org/2000/svg','rect');
-      rect.setAttribute('x', x + barPadding/2);
-      rect.setAttribute('y', y);
-      rect.setAttribute('width', Math.max(6, barW - barPadding));
-      rect.setAttribute('height', h);
-      rect.setAttribute('rx', 3);
-      rect.setAttribute('fill', mood ? '#13ec13' : 'rgba(255,255,255,0.06)');
-      rect.setAttribute('opacity', 0.95);
-      svg.appendChild(rect);
-
-      if (i % 2 === 0) {
-        const dt = document.createElementNS('http://www.w3.org/2000/svg','text');
-        dt.setAttribute('x', x + (barW/2));
-        dt.setAttribute('y', H - 2);
-        dt.setAttribute('fill', 'rgba(255,255,255,0.28)');
-        dt.setAttribute('font-size', '10');
-        dt.setAttribute('text-anchor', 'middle');
-        const short = new Date(dObj.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
-        dt.textContent = short;
-        svg.appendChild(dt);
-      }
-    });
-  }
-
-  // ---------- Most recent find & render ----------
-  function findMostRecentResult() {
-    for (let i=0;i<60;i++){
-      const d = new Date(); d.setDate(d.getDate() - i);
-      const key = d.toISOString().slice(0,10);
-      const res = loadResult(key);
-      if (res && !res.skipped) return { date: key, payload: res, source: 'daily_quiz' };
-    }
-    try {
-      const entries = loadMoodEntries();
-      if (entries && entries.length) {
-        const sorted = entries.slice().sort((a,b)=> new Date(b.createdAt) - new Date(a.createdAt));
-        const latest = sorted[0];
-        return { date: latest.createdAt.slice(0,10), payload: { moodValue: latest.mood, moodLabel: latest.mood>=4?'Positive':(latest.mood>=3?'Neutral':'Low'), avg: latest.mood-1, note: latest.note || '' }, source: 'mood_entry' };
-      }
-    } catch(e){}
-    return null;
-  }
-
-  function renderMostRecent() {
-    mostRecentSummary.innerHTML = '';
-    const recent = findMostRecentResult();
-    if (!recent) {
-      mostRecentSummary.innerHTML = `<div class="p-3 rounded bg-background-dark/40 text-sm text-text-muted">No previous results</div>`;
-      return;
-    }
-    const p = recent.payload;
-    const dateText = new Date(recent.date).toLocaleDateString();
-    const html = `
-      <div class="p-3 rounded bg-background-dark/40">
-        <div class="flex items-center justify-between">
-          <div>
-            <div class="text-sm text-text-muted">Most recent</div>
-            <div class="text-lg font-semibold">${escapeHtml(p.moodLabel || '')} <span class="text-sm text-text-muted">(${p.moodValue || ''})</span></div>
-            <div class="text-xs text-text-subtle mt-1">${escapeHtml(dateText)}</div>
-          </div>
-          <div class="text-sm text-text-muted">
-            <button id="viewHistoryBtn" class="px-2 py-1 border rounded text-xs">View chart</button>
-          </div>
-        </div>
-        ${p.note ? `<div class="mt-2 text-sm text-text-muted">Note: ${escapeHtml(String(p.note).slice(0,120))}</div>` : ''}
-      </div>
-    `;
-    mostRecentSummary.innerHTML = html;
-    const btn = document.getElementById('viewHistoryBtn');
-    if (btn) btn.addEventListener('click', () => {
-      questionsContainer.classList.remove('expanded'); questionsContainer.classList.add('collapsed');
-      quizResult.classList.remove('hidden');
-      quizMoodLabel.textContent = (p.moodLabel || '') + (p.moodValue ? ' · mood ' + p.moodValue : '');
-      quizScoreLabel.textContent = p.avg ? 'Score: ' + (Math.round(p.avg*100)/100) + ' (avg)' : '';
-      mostRecentDate.textContent = dateText;
-      if (p.note) { quizNote.value = p.note; noteSavedSummary.textContent = p.note; noteSavedSummary.classList.remove('hidden'); quizNoteWrap.classList.add('collapsed'); }
-      else { quizNote.value = ''; quizNoteWrap.classList.remove('collapsed'); noteSavedSummary.classList.add('hidden'); }
-      renderHistoryChart();
-    });
-  }
-
-  // ---------- Initialize UI ----------
-  renderQuestions();
-  const existing = loadResult(today);
-  if (existing){
-    if (existing.skipped){
-      quizResult.classList.remove('hidden');
-      quizMoodLabel.textContent = 'Skipped';
-      quizScoreLabel.textContent = '';
-      setFormDisabled(true);
-      questionsContainer.classList.add('collapsed');
-    } else {
-      // show today's result in result area
-      quizResult.classList.remove('hidden');
-      quizMoodLabel.textContent = existing.moodLabel + ' · mood ' + existing.moodValue;
-      quizScoreLabel.textContent = 'Score: ' + (Math.round(existing.avg*100)/100) + ' (avg)';
-      quizNote.value = existing.note || '';
-      questionsContainer.classList.add('collapsed');
-      quizNoteWrap.classList.remove('collapsed'); quizNoteWrap.classList.add('expanded');
-      setFormDisabled(true);
-    }
-  } else {
-    questionsContainer.classList.remove('collapsed'); questionsContainer.classList.add('expanded');
-    quizResult.classList.add('hidden');
-    setFormDisabled(false);
-  }
-  renderMostRecent();
-  renderHistoryChart();
-
-  // ---------- Event handlers ----------
-  quizForm.addEventListener('submit', function(e){
+  // Minimize quiz section after submit
+  document.getElementById('quiz-form').addEventListener('submit', (e) => {
     e.preventDefault();
-    const answers = [];
-    for (let i=0;i<todaysQuestions.length;i++){
-      const radios = document.getElementsByName('q-' + i);
-      let val = null;
-      for (const r of radios) if (r.checked) { val = Number(r.value); break; }
-      if (val === null) { alert('Please answer all questions'); return; }
-      answers.push(val);
-    }
-    const computed = computeScore(answers);
-    const payload = { date: today, answers, sum: computed.sum, avg: computed.avg, moodValue: computed.moodValue, moodLabel: computed.moodLabel, note: quizNote.value||'', createdAt: new Date().toISOString() };
-    saveResult(today, payload);
-    saveMoodEntry({ id:'q-'+Date.now(), mood: computed.moodValue, note: payload.note, createdAt: new Date().toISOString() });
-    showResult(payload);
-    renderMostRecent();
+    document.getElementById('quiz-section').classList.add('hidden-section');
+    alert("Your answers were saved!");
   });
 
-  skipQuizBtn.addEventListener('click', function(){
-    if (!confirm("Skip today's quiz?")) return;
-    saveResult(today, { date: today, skipped: true, createdAt: new Date().toISOString() });
-    setFormDisabled(true);
-    questionsContainer.classList.add('collapsed');
-    quizResult.classList.remove('hidden');
-    quizMoodLabel.textContent = 'Skipped';
-    quizScoreLabel.textContent = '';
-    renderMostRecent();
-    renderHistoryChart();
+  // Minimize note section after save
+  document.getElementById('save-note').addEventListener('click', () => {
+    document.getElementById('note-section').classList.add('hidden-section');
+    alert("Note saved successfully!");
   });
-
-  retakeQuizBtn.addEventListener('click', function(){
-    if (!confirm("Retake will overwrite today's result. Continue?")) return;
-    localStorage.removeItem(storageKeyForDate(today));
-    try {
-      const arr = loadMoodEntries().filter(e => !(e.createdAt && e.createdAt.slice(0,10) === today && String(e.id || '').startsWith('q-')));
-      localStorage.setItem(MOOD_KEY, JSON.stringify(arr));
-    } catch(e){ console.warn(e); }
-    questionsContainer.classList.remove('collapsed'); questionsContainer.classList.add('expanded');
-    quizResult.classList.add('hidden');
-    setFormDisabled(false);
-    for (let i=0;i<todaysQuestions.length;i++){
-      const radios = document.getElementsByName('q-'+i);
-      radios.forEach(r => r.checked = (r.value === '2'));
-    }
-    quizNote.value = '';
-    noteSavedSummary.classList.add('hidden');
-    renderMostRecent();
-    renderHistoryChart();
-  });
-
-  saveQuizNoteBtn.addEventListener('click', function(){
-    const saved = loadResult(today);
-    if (!saved) { alert('Please submit the quiz first.'); return; }
-    saved.note = quizNote.value || '';
-    saveResult(today, saved);
-    noteSavedSummary.textContent = saved.note ? ('Saved note: ' + saved.note.slice(0,200)) : 'No note saved';
-    noteSavedSummary.classList.remove('hidden');
-    quizNoteWrap.classList.remove('expanded'); quizNoteWrap.classList.add('collapsed');
-    renderMostRecent();
-    renderHistoryChart();
-  });
-
-  clearQuizNoteBtn.addEventListener('click', function(){ quizNote.value = ''; });
-
-  // helpers used above
-  function setFormDisabled(disabled){
-    const inputs = questionsList.querySelectorAll('input[type="radio"]');
-    inputs.forEach(i => i.disabled = disabled);
-    submitQuizBtn.disabled = disabled;
-    skipQuizBtn.disabled = disabled;
-  }
-  function showResult(payload){
-    quizMoodLabel.textContent = payload.moodLabel + ' · mood ' + payload.moodValue;
-    quizScoreLabel.textContent = 'Score: ' + (Math.round(payload.avg * 100) / 100) + ' (avg)';
-    quizNote.value = payload.note || '';
-    questionsContainer.classList.remove('expanded'); questionsContainer.classList.add('collapsed');
-    quizResult.classList.remove('hidden');
-    quizNoteWrap.classList.remove('collapsed'); quizNoteWrap.classList.add('expanded');
-    setFormDisabled(true);
-    renderHistoryChart();
-  }
-
-  // re-used functions from earlier
-  function renderQuestions(){ /* re-render function declared earlier used at init */ }
-  (function defineRenderQuestions(){
-    questionsList.innerHTML = '';
-    todaysQuestions.forEach((q, idx) => {
-      const id = 'q-' + idx;
-      const wrapper = document.createElement('div');
-      wrapper.className = 'space-y-1';
-      wrapper.innerHTML = `
-        <div class="text-sm font-medium text-neutral-200">${escapeHtml(q)}</div>
-        <div class="flex items-center gap-2 text-xs text-text-muted">
-          ${[0,1,2,3,4].map(v => `
-            <label class="flex items-center gap-2">
-              <input name="${id}" type="radio" value="${v}" class="form-radio" ${v===2?'checked':''} />
-              <span class="w-6 text-center">${v}</span>
-            </label>`).join('')}
-          <div class="ml-3 text-xs text-text-muted">0=Never · 4=Always</div>
-        </div>
-      `;
-      questionsList.appendChild(wrapper);
-    });
-  })();
-
-  function computeScore(answers){
-    const sum = answers.reduce((s,a)=>s+(Number(a)||0),0);
-    const avg = answers.length ? (sum / answers.length) : 0;
-    const moodValue = Math.round((avg / 4) * 4) + 1;
-    let moodLabel = 'Neutral';
-    if (avg >= 3.25) moodLabel = 'Positive';
-    else if (avg >= 1.75) moodLabel = 'Neutral';
-    else moodLabel = 'Low';
-    return { sum, avg, moodValue, moodLabel };
-  }
-
-}); // DOMContentLoaded
 </script>
 </body>
 </html>
